@@ -21,13 +21,13 @@ Note that the implemented *pseudo-random number generators* (PRNG) are not [cryp
 
 ## Aims
 
-- Replayable sequence of pseudo-random numbers regardless the platform
+- Replayable sequences of pseudo-random numbers regardless the platform
 - Well-typed primitives
-- Pure Functional API and Mutable Object Oriented API
-- Multiple PRNG
-- Better or close to `Math.random` performance *
+- Pure functional API and mutable Object Oriented API
+- Multiple PRNGs
+- Reasonable performances, and potentially better than `Math.random` *
 
-\* A copy-on-write strategy is used for the Pure Functional API. This slowdowns PRNGS with large entropy. Thus, Pure Functional API is better suited for low-entropy generators.
+\* A copy-on-write strategy is used for the pure functional API. This slowdowns PRNGS with large entropy. Thus, pure functional API is better suited for low-entropy generators.
 
 ## Setup
 
@@ -52,13 +52,15 @@ Import a random generator. e.g. `alea`:
 import { alea } from "replayable-random"
 ```
 
-Every generators conforms to the same interfaces. In the following sub-sections, we assume that this generator is imported.
+In the following sub-sections, we assume that this generator is imported.
+ We first present the pure functional API, then we present the mutable Object Oriented API.
 
-See [Gnerators](#generators) for available generators.
+Every generator conforms to the same interfaces.
+ See [Gnerators](#generators) for available generators.
 
 ### Pure functional API
 
-The generator's state is immutable. Every time that a random number is generated, a new state is returned.
+Every time that a random number is generated, a new state is returned.
 
 Derive your first generator's state from a seed:
 
@@ -149,9 +151,9 @@ Coming soon...
 
 Work In Progress...
 
-All following projects enable to generate reproducible pseudo random numbers. However they offer distinct API and primitives.
+All following projects enable to generate reproducible pseudo-random numbers.
 
-[prando][prando] provides a (mutable) Object Oriented API that uses a *xorshift PRNG* based on the triplet combination (13, 17, 5) by George Marsaglia.
+[prando][prando] provides a mutable Object Oriented API that uses a *xorshift PRNG* based on the triplet combination invented by George Marsaglia.
 
 [pure-rand][pure-rand] provides an immutable Object Oriented API and two PRNGs: *Mersenne Twister*, *Linear Congruential*.
 
@@ -161,7 +163,7 @@ All following projects enable to generate reproducible pseudo random numbers. Ho
 
 [seedrandom][seedrand] provides an impure functional API and seven PRNGs: *alea* (Baagøe), *xor128* (Marsaglia), *tychei* (Neves / Araujo), *xorwow* (Marsaglia), *xor4096* (Brent), *xorshift7* (Panneton / L'ecuyer), *quick* (Bau)
 
-Is your project missing in the list? Please, post an issue to warn me about this.
+Is your project missing in the list? Please, post an issue or a pull-request.
 
 | Project                  | Functional API | Object Oriented API |
 |--------------------------|----------------|---------------------|
