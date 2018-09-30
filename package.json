@@ -1,0 +1,68 @@
+{
+  "name": "replayable-random",
+  "version": "0.0.0",
+  "description": "Reproducible sequences of pseudo random numbers for TypeScript and JavaScript",
+  "keywords": [
+    "alea",
+    "deterministic",
+    "functional",
+    "prng",
+    "pure",
+    "random",
+    "rand",
+    "replayable",
+    "reproducible",
+    "seed"
+  ],
+  "author": "Victorien Elvinger (victorien.elvinger.fr)",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Conaclos/replayable-random"
+  },
+  "bugs": {
+    "url": "https://github.com/Conaclos/replayable-random/issues"
+  },
+  "main": "dist/node/index.js",
+  "module": "dist/esm/index.js",
+  "es2015": "dist/es2015/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rm -rf dist/ && tsc -p tsconfig.node.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.es2015.json",
+    "check": "tsc --noEmit",
+    "lint": "tslint --project tsconfig.json",
+    "lint:fix": "tslint --project tsconfig.json --fix",
+    "perf": "rm -rf .built && tsc && node .built/perf/impl/alea.perf.js && node .built/perf/impl/uhe.perf.js",
+    "test": "rm -rf .built && tsc && ava",
+    "release:pre": "npm run test && npm run lint && npm run build",
+    "release": "npm run release:pre && standard-version --sign --no-verify",
+    "commitmsg": "commitlint  -e  $GIT_PARAMS",
+    "prepush": "npm test && npm run lint"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^7.1.2",
+    "@commitlint/config-conventional": "^7.1.2",
+    "@types/benchmark": "^1.0.31",
+    "ava": "^0.25.0",
+    "benchmark": "^2.1.4",
+    "husky": "^1.0.0-rc.15",
+    "standard-version": "^4.4.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
+  },
+  "ava": {
+    "files": [
+      ".built/test/**/*.test.js"
+    ],
+    "source": [
+      "test"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^1.9.3"
+  }
+}
