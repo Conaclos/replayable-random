@@ -77,7 +77,7 @@ Generate your first random numbers:
 const [n, s2] = alea.u32(s1)
 
 // safe integer
-const [i, s3] = alea.i54(s3)
+const [i, s3] = alea.i54(s2)
 
 // unsigned int between 1 (inclusive) and 5 (exclusive)
 const [n2, s4] = alea.u32Between(1, 5)(s3)
