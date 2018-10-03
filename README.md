@@ -56,7 +56,6 @@ In the following sub-sections, we assume that this generator is imported.
  We first present the pure functional API, then we present the mutable Object Oriented API.
 
 Every generator conforms to the same interfaces.
- See [Gnerators](#generators) for available generators.
 
 ### Pure functional API
 
@@ -78,16 +77,16 @@ Generate your first random numbers:
 const [n, s2] = alea.u32(s1)
 
 // safe integer
-const [i2, s3] = alea.i54(s3)
+const [i, s3] = alea.i54(s3)
 
 // unsigned int between 1 (inclusive) and 5 (exclusive)
 const [n2, s4] = alea.u32Between(1, 5)(s3)
 
 // signed int between -4 (inclusive) and 5 (exclusive)
-const [i3, s5] = alea.i32Between(-4, 5)(s4)
+const [i2, s5] = alea.i32Between(-4, 5)(s4)
 
 // float with 32 significant bits between 0 (inclusive) and 1 (exclusive)
-const [i3, s6] = alea.fract32(-4, 5)(s5)
+const [f, s6] = alea.fract32(s5)
 ```
 
 See [`Random`](src/core/random.ts) for all available functions.
@@ -112,13 +111,16 @@ Generate your first random numbers:
 const n = gen.nextU32()
 
 // safe integer
-const i2 = gen.nextI54()
+const i = gen.nextI54()
 
 // unsigned int between 1 (inclusive) and 5 (exclusive)
 const n2 = gen.nextU32Between(1, 5)
 
 // signed int between -4 (inclusive) and 5 (exclusive)
-const i3 = gen.nextI32Between(-4, 5)
+const i2 = gen.nextI32Between(-4, 5)
+
+// float with 32 significant bits between 0 (inclusive) and 1 (exclusive)
+const f = gen.nextFract32()
 ```
 
 Note that you can backup the generator's state and start where you stopped the last time:
