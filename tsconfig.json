@@ -16,5 +16,5 @@
 
     "pretty": true
   },
-  "include": ["src/**/*", "test/**/*", "perf/**/*"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "perf/**/*.ts"]
 }

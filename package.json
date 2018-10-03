@@ -23,16 +23,16 @@
   "bugs": {
     "url": "https://github.com/Conaclos/replayable-random/issues"
   },
-  "main": "dist/node/index.js",
-  "module": "dist/esm/index.js",
+  "main": "dist/main/index.js",
+  "module": "dist/module/index.js",
   "es2015": "dist/es2015/index.js",
-  "types": "dist/esm/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "build": "rm -rf dist/ && tsc -p tsconfig.node.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.es2015.json",
+    "build": "rm -rf dist && tsc -p tsconfig.main.json && tsc -p tsconfig.module.json && tsc -p tsconfig.es2015.json && tsc -p tsconfig.types.json",
     "check": "tsc --noEmit",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "tslint --project tsconfig.json --fix",
