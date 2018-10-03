@@ -63,7 +63,7 @@ export class RandomStream <S> {
      * @return a random unsigned integer (32bits) in interval [l, exclusiveU[
      */
     nextU32Between ( l: u32, exclusiveU: u32): u32 {
-        return this.generator.mutU32Between(l, exclusiveU)(this.state)
+        return this.generator.mutU32Between(l, exclusiveU, this.state)
     }
 
     /**
@@ -72,7 +72,7 @@ export class RandomStream <S> {
      * @return a random integer (32bits) in interval [l, exclusiveU[
      */
     nextI32Between (l: i32, exclusiveU: i32): i32 {
-        return this.generator.mutI32Between(l, exclusiveU)(this.state)
+        return this.generator.mutI32Between(l, exclusiveU, this.state)
     }
 
     /**

@@ -71,12 +71,12 @@ export const randomFrom =
 
         u32Between: (l, exclusiveU) => (g) => {
             const copied = deepCopy(g)
-            return [mutU32Between(l, exclusiveU)(copied), copied]
+            return [mutU32Between(l, exclusiveU, copied), copied]
         },
 
         i32Between: (l, exclusiveU) => (g) => {
             const copied = deepCopy(g)
-            return [mutI32Between(l, exclusiveU)(copied), copied]
+            return [mutI32Between(l, exclusiveU, copied), copied]
         },
 
         i54: (g) => {

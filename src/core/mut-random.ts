@@ -34,8 +34,7 @@ export interface MutRandom <S> {
      * @param g generator state [Mutated]
      * @return a random unsigned integer (32bits) in interval [l, exclusiveU[
      */
-    readonly mutU32Between: (this: void, l: u32, exclusiveU: u32) =>
-        (this: void, g: S) => u32
+    readonly mutU32Between: (this: void, l: u32, exclusiveU: u32, g: S) => u32
 
     /**
      * @param l lower bound (inclusive)
@@ -43,8 +42,7 @@ export interface MutRandom <S> {
      * @param g generator state [Mutated]
      * @return a random integer (32bits) in interval [l, exclusiveU[
      */
-    readonly mutI32Between: (this: void, l: i32, exclusiveU: i32) =>
-        (this: void, g: S) => i32
+    readonly mutI32Between: (this: void, l: i32, exclusiveU: i32, g: S) => i32
 
     /**
      * @param g generator state [Mutated]
@@ -63,9 +61,9 @@ const mutRandomFrom =
     <S> ({ mutFract32, mutU32, deepCopy }: Pick<MutRandom<S>, "mutFract32" | "mutU32" | "deepCopy">): MutRandom<S> => ({
         mutU32, mutFract32, deepCopy,
 
-        mutU32Between: (l, exclusiveU) => (g) => asU32Between(l, exclusiveU, mutFract32(g)),
+        mutU32Between: (l, exclusiveU, g) => asU32Between(l, exclusiveU, mutFract32(g)),
 
-        mutI32Between: (l, exclusiveU) => (g) => asI32Between(l, exclusiveU, mutFract32(g)),
+        mutI32Between: (l, exclusiveU, g) => asI32Between(l, exclusiveU, mutFract32(g)),
 
         mutI54: (g) => asI54(mutFract32(g), mutU32(g)),
 
