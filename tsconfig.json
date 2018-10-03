@@ -7,7 +7,7 @@
     "target": "ES5",
     "sourceMap": true,
 
-    "outDir": "./.built",
+    "outDir": "./.generated",
 
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
