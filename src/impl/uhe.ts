@@ -2,7 +2,7 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32, i32, fract32, f64 } from "../util/number"
+import { u32, i32, f64, U32_TOP } from "../util/number"
 import { mashes } from "../util/mash"
 import { randomFromMutU32 } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
@@ -53,25 +53,40 @@ const INITIAL_CARRY = 1
  */
 const ORDER = 48
 
+/**
+ * Compute the maxium number of random numbers that a state can hold.
+ * Here, the maximum number is equal to ORDER.
+ * @param g generator's state [Mutated]
+ */
+function pregenerate (g: UheState): void {
+    const seeds = g.seeds
+    let carry = g.carry
+    for (let i = 0; i < ORDER; i++) {
+        const t: f64 = MULTIPLIER * asFract32(seeds[i]) + asFract32(carry)
+        carry = t | 0
+        seeds[i] = asU32(t - carry) // new computed seed
+    }
+    g.carry = carry
+}
+
 const uheMutRandom = randomFromMutU32({
     mutU32 (g: UheState): u32 {
-        const seeds = g.seeds
-        const phase = g.phase
-
-        const t: f64 = MULTIPLIER * asFract32(seeds[phase]) + asFract32(g.carry)
-        const carry = t | 0
-        const rand = asU32(t - carry) // new computed seed
-
-        g.carry = carry
-        seeds[phase] = rand
-        g.phase = (phase + 1) % ORDER >>> 0
-        return rand
+        let phase = g.phase
+        if (phase === ORDER) {
+            pregenerate(g)
+            phase = 0
+        }
+        g.phase = phase + 1 >>> 0
+        return g.seeds[phase]
     },
 
-    smartCopy (g: Readonly<UheState>): UheState {
+    smartCopy (g: Readonly<UheState>, n: u32): UheState {
         const carry = g.carry
-        const seeds = new Uint32Array(g.seeds)
         const phase = g.phase
+        let seeds = g.seeds
+        if (n >= ORDER  || phase + n >= ORDER) {
+            seeds = new Uint32Array(seeds)
+        }
         return { carry, seeds, phase }
     }
 })
@@ -79,7 +94,7 @@ const uheMutRandom = randomFromMutU32({
 const uheRandomFactory = randomFactoryFrom({
     fromUint8Array (seed: Uint8Array): UheState {
         const seeds = mashes(seed, ORDER)
-        return { carry: INITIAL_CARRY, seeds, phase: 0 }
+        return { carry: INITIAL_CARRY, seeds, phase: ORDER }
     },
 })
 

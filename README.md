@@ -27,7 +27,7 @@ Note that the implemented *pseudo-random number generators* (PRNG) are not [cryp
 - Multiple PRNGs
 - Reasonable performances, and potentially better than `Math.random` *
 
-\* A copy-on-write strategy is used for the pure functional API. This slowdowns PRNGS with large entropy. Thus, pure functional API is better suited for low-entropy generators.
+\* A copy-on-write strategy is used for the pure functional API.
 
 ## Setup
 
