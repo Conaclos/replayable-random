@@ -2,6 +2,7 @@
 import test from "ava"
 
 import { isU32, isI32, isNonNegativeFract32, isNonNegativeFract33 } from "../testutils"
+import { sample } from "../_data/alea-sample"
 
 import { alea } from "../../src/impl/alea"
 import { U32_TOP, I32_BOTTOM, I32_TOP } from "../../src/util/number"
@@ -39,15 +40,7 @@ test("mut-alea-well-typed", (t) => {
 test("alea-is-deterministic", (t) => {
     const rand = alea.streamFrom("seed")
 
-    const expectedStream = Uint32Array.of(
-        149261188, 2487070486, 2602347448, 3645231185,
-        2120325931, 446987717, 163591728, 3246687600,
-        4166470180, 3384042145, 1059298884, 885817093,
-        2527000796, 311287600, 3637279863, 1980324706,
-        1423402627, 3275616637, 2094667232, 3183483938
-    )
-
-    for (const expected of expectedStream) {
+    for (const expected of sample) {
         t.is(rand.nextU32(), expected)
     }
 })

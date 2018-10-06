@@ -2,6 +2,7 @@
 import test from "ava"
 
 import { isU32, isI32, isNonNegativeFract32, isNonNegativeFract33 } from "../testutils"
+import { sample } from "../_data/uhe-sample"
 
 import { uhe } from "../../src/impl/uhe"
 import { U32_TOP, I32_BOTTOM, I32_TOP } from "../../src/util/number"
@@ -39,15 +40,7 @@ test("mut-uhe-well-typed", (t) => {
 test("uhe-is-deterministic", (t) => {
     const rand = uhe.streamFrom("seed")
 
-    const expectedStream = Uint32Array.of(
-        1975804156, 2112430862, 2446796506, 4206307178,
-        1456543323, 4011525091, 2845328503, 593982652,
-        3838310559, 2925522420, 1418533361, 3622803603,
-        1802007846, 2364178472, 393601146, 2640450475,
-        179598546, 3465410557, 3962719202, 1879926770,
-    )
-
-    for (const expected of expectedStream) {
+    for (const expected of sample) {
         t.is(rand.nextU32(), expected)
     }
 })
