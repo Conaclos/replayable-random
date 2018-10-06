@@ -2,7 +2,7 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, u32, i54, fract32, fract53 } from "../util/number"
+import { i32, u32, i54, fract32, fract53, U32_TOP } from "../util/number"
 import { MutRandom } from "./mut-random"
 
 /**
@@ -39,7 +39,7 @@ export class RandomStream <S> {
      * @return snapshot of the current generator's state
      */
     stateSnapshot (): Readonly<S> {
-        return this.generator.deepCopy(this.state)
+        return this.generator.smartCopy(this.state, U32_TOP)
     }
 
 // Generation

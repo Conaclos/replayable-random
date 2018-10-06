@@ -58,34 +58,34 @@ export interface Random <S> {
 }
 
 export const randomFrom =
-    <S> ({ deepCopy, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 }: MutRandom<S>): Random<S> => ({
+    <S> ({ smartCopy, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 }: MutRandom<S>): Random<S> => ({
         u32: (g) => {
-            const copied = deepCopy(g)
+            const copied = smartCopy(g, 1)
             return [mutU32(copied), copied]
         },
 
         fract32: (g) => {
-            const copied = deepCopy(g)
+            const copied = smartCopy(g, 1)
             return [mutFract32(copied), copied]
         },
 
         u32Between: (l, exclusiveU) => (g) => {
-            const copied = deepCopy(g)
+            const copied = smartCopy(g, 1)
             return [mutU32Between(l, exclusiveU, copied), copied]
         },
 
         i32Between: (l, exclusiveU) => (g) => {
-            const copied = deepCopy(g)
+            const copied = smartCopy(g, 1)
             return [mutI32Between(l, exclusiveU, copied), copied]
         },
 
         i54: (g) => {
-            const copied = deepCopy(g)
+            const copied = smartCopy(g, 2)
             return [mutI54(copied), copied]
         },
 
         fract53: (g) => {
-            const copied = deepCopy(g)
+            const copied = smartCopy(g, 2)
             return [mutFract53(copied), copied]
         },
     })

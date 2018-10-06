@@ -68,7 +68,7 @@ const uheMutRandom = randomFromMutU32({
         return rand
     },
 
-    deepCopy (g: Readonly<UheState>): UheState {
+    smartCopy (g: Readonly<UheState>): UheState {
         const carry = g.carry
         const seeds = new Uint32Array(g.seeds)
         const phase = g.phase

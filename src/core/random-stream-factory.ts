@@ -2,6 +2,7 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
+import { U32_TOP } from "../util/number"
 import { MutRandom } from "./mut-random"
 import { RandomFactory } from "./random-factory"
 import { RandomStream } from "./random-stream"
@@ -36,7 +37,7 @@ export const srandomStreamFactoryFrom =
             new RandomStream(randFactory.from(seed), rand),
 
         streamFromState: (state) => // deeply opy state to protect internal state
-            new RandomStream(rand.deepCopy(state), rand),
+            new RandomStream(rand.smartCopy(state, U32_TOP), rand),
 
         streamFromUint8Array: (seed) =>
             new RandomStream(randFactory.fromUint8Array(seed), rand),

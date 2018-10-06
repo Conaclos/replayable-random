@@ -56,7 +56,7 @@ const aleaMutRandom = randomFromMutFract32({
         return g.seed2
     },
 
-    deepCopy (g: Readonly<AleaState>): AleaState {
+    smartCopy (g: Readonly<AleaState>): AleaState {
         return {
             carry: g.carry,
             seed0: g.seed0,
