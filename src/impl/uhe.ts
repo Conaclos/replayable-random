@@ -60,8 +60,9 @@ const ORDER = 48
  */
 function pregenerate (g: UheState): void {
     const seeds = g.seeds
+    const length = seeds.length
     let carry = g.carry
-    for (let i = 0; i < ORDER; i++) {
+    for (let i = 0; i < length; i++) {
         const t: f64 = MULTIPLIER * asFract32(seeds[i]) + asFract32(carry)
         carry = t | 0
         seeds[i] = asU32(t - carry) // new computed seed
@@ -71,20 +72,26 @@ function pregenerate (g: UheState): void {
 
 const uheMutRandom = randomFromMutU32({
     mutU32 (g: UheState): u32 {
+        const seeds = g.seeds
         let phase = g.phase
-        if (phase === ORDER) {
+        if (phase === seeds.length) {
+            // All previously generated randoms were consumed.
+            // Generate the next ones.
             pregenerate(g)
             phase = 0
         }
         g.phase = phase + 1 >>> 0
-        return g.seeds[phase]
+        return seeds[phase]
     },
 
     smartCopy (g: Readonly<UheState>, n: u32): UheState {
         const carry = g.carry
         const phase = g.phase
         let seeds = g.seeds
-        if (n >= ORDER  || phase + n >= ORDER) {
+        const unconsumedCount = seeds.length - phase
+        if (n > unconsumedCount) {
+            // Among the n planned generations, some generation
+            // will modify the seeds array. Thus we copy it.
             seeds = new Uint32Array(seeds)
         }
         return { carry, seeds, phase }
@@ -94,7 +101,7 @@ const uheMutRandom = randomFromMutU32({
 const uheRandomFactory = randomFactoryFrom({
     fromUint8Array (seed: Uint8Array): UheState {
         const seeds = mashes(seed, ORDER)
-        return { carry: INITIAL_CARRY, seeds, phase: ORDER }
+        return { carry: INITIAL_CARRY, seeds, phase: seeds.length }
     },
 })
 
