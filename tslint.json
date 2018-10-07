@@ -9,12 +9,6 @@
     "no-unnecessary-type-assertion": true,
     "no-var-requires": true,
     "only-arrow-functions": [true, "allow-declarations"],
-    "typedef": [
-      true,
-      "call-signature",
-      "parameter",
-      "property-declaration"
-    ],
     "prefer-for-of": true,
     "promise-function-async": true,
     "typedef-whitespace": [true, {
@@ -50,7 +44,6 @@
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-this-assignment": true,
-    "no-unsafe-any": true,
     "no-unsafe-finally": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
