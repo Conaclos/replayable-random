@@ -68,7 +68,7 @@ Derive your first generator's state from a seed:
 const s1 = alea.from("seed")
 ```
 
-See [`RandomFactory`](src/core/random-factory.ts) for all available state derivators.
+See [`Random`](src/core/random.ts) for all available state derivators.
 
 Generate your first random numbers:
 
@@ -102,7 +102,7 @@ Instanciate your generator:
 const gen = alea.streamFrom("seed")
 ```
 
-See [`RandomStreamFactory`](src/core/random-stream-factory.ts) for all available factories.
+See [`Random`](src/core/random-stream-factory.ts) for all available stream factories.
 
 Generate your first random numbers:
 

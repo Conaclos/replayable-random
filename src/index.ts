@@ -3,9 +3,7 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 export { Random } from "./core/random"
-export { RandomFactory } from "./core/random-factory"
 export { RandomStream } from "./core/random-stream"
-export { RandomStreamFactory } from "./core/random-stream-factory"
 
 export { alea, AleaState } from "./impl/alea"
 export { uhe, UheState } from "./impl/uhe"

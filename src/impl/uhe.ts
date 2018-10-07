@@ -2,12 +2,9 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32, i32, f64, U32_TOP } from "../util/number"
+import { u32, i32, f64 } from "../util/number"
 import { mashes } from "../util/mash"
-import { randomFromMutU32 } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
-import { RandomFactory, randomFactoryFrom } from "../core/random-factory"
-import { RandomStreamFactory, srandomStreamFactoryFrom } from "../core/random-stream-factory"
 import { asFract32, asU32 } from "../util/number-conversion"
 
 /**
@@ -70,7 +67,7 @@ function pregenerate (g: UheState): void {
     g.carry = carry
 }
 
-const uheMutRandom = randomFromMutU32({
+export const uhe: Random<UheState> = randomFrom({
     mutU32 (g: UheState): u32 {
         const seeds = g.seeds
         let phase = g.phase
@@ -95,22 +92,10 @@ const uheMutRandom = randomFromMutU32({
             seeds = new Uint32Array(seeds)
         }
         return { carry, seeds, phase }
-    }
-})
+    },
 
-const uheRandomFactory = randomFactoryFrom({
     fromUint8Array (seed: Uint8Array): UheState {
         const seeds = mashes(seed, ORDER)
         return { carry: INITIAL_CARRY, seeds, phase: seeds.length }
     },
 })
-
-const uheRandomStreamFactory = srandomStreamFactoryFrom(uheMutRandom, uheRandomFactory)
-
-const uheRandom = randomFrom(uheMutRandom)
-
-export const uhe: Random<UheState> & RandomFactory<UheState> & RandomStreamFactory<UheState> = {
-    ...uheRandom,
-    ...uheRandomFactory,
-    ...uheRandomStreamFactory
-}

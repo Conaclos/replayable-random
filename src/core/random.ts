@@ -2,14 +2,48 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, u32, i54, fract32, fract53 } from "../util/number"
-import { MutRandom } from "./mut-random"
+import { i32, u32, i54, fract32, fract53, U32_TOP } from "../util/number"
+import { MutRandom, Fract32BasedMutRandom, U32BasedMutRandom, mutRandomFrom } from "./mut-random"
+import { RandomStream } from "./random-stream"
 
 /**
- * Immutable common interface for seeded random generators.
+ * Common interface for seeded random generators.
  * The generic type corresponds to the generator state's type.
  */
 export interface Random <S> {
+// State derivator
+    /**
+     * @param seed
+     * @return generator state using seed to produce deterministic generations
+     */
+    readonly from: (this: void, seed: string) => Readonly<S>
+
+    /**
+     * @param seed
+     * @return generator state using seed to produce deterministic generations
+     */
+    readonly fromUint8Array: (this: void, seed: Uint8Array) => Readonly<S>
+
+// Stream factory
+    /**
+     * @param seed
+     * @return Random generator using seed to produce deterministic randoms
+     */
+    readonly streamFrom: (this: void, seed: string) => RandomStream<S>
+
+    /**
+     * @param state generator state
+     * @return Random generator using an existing generator's state
+     */
+    readonly streamFromState: (this: void, state: Readonly<S>) => RandomStream<S>
+
+    /**
+     * @param seed
+     * @return Random generator using seed to produce deterministic randoms
+     */
+    readonly streamFromUint8Array: (this: void, seed: Uint8Array) => RandomStream<S>
+
+// Random generation
     /**
      * @param g generator state
      * @return a random unsigned integer (32bits), and next generator state
@@ -57,8 +91,20 @@ export interface Random <S> {
     readonly fract53: (this: void, g: Readonly<S>) => [fract53, Readonly<S>]
 }
 
-export const randomFrom =
-    <S> ({ smartCopy, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 }: MutRandom<S>): Random<S> => ({
+function randomFromMut <S> (mutRand: MutRandom<S>): Random<S> {
+    const { fromUint8Array, from, smartCopy, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 } = mutRand
+    return {
+        fromUint8Array, from,
+
+        streamFrom: (seed) =>
+            new RandomStream(from(seed), mutRand),
+
+        streamFromState: (state) => // deeply copy state to protect internal state
+            new RandomStream(smartCopy(state, U32_TOP), mutRand),
+
+        streamFromUint8Array: (seed) =>
+            new RandomStream(fromUint8Array(seed), mutRand),
+
         u32: (g) => {
             const copied = smartCopy(g, 1)
             return [mutU32(copied), copied]
@@ -88,4 +134,12 @@ export const randomFrom =
             const copied = smartCopy(g, 2)
             return [mutFract53(copied), copied]
         },
-    })
+    }
+}
+
+/**
+ * @internal
+ */
+export function randomFrom <S> (partMutRand: Fract32BasedMutRandom<S> | U32BasedMutRandom<S>): Random<S> {
+    return randomFromMut(mutRandomFrom(partMutRand))
+}

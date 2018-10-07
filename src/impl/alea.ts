@@ -4,10 +4,7 @@
 
 import { i32, fract32, f64 } from "../util/number"
 import { mashes } from "../util/mash"
-import { randomFromMutFract32 } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
-import { RandomFactory, randomFactoryFrom } from "../core/random-factory"
-import { RandomStreamFactory, srandomStreamFactoryFrom } from "../core/random-stream-factory"
 import { asFract32 } from "../util/number-conversion"
 
 /**
@@ -45,7 +42,7 @@ const MULTIPLIER = 2_091_639
 
 const INITIAL_CARRY = 1
 
-const aleaMutRandom = randomFromMutFract32({
+export const alea: Random<AleaState> = randomFrom({
     mutFract32 (g: AleaState): fract32 {
         const t: f64 = MULTIPLIER * g.seed0 + asFract32(g.carry)
         g.carry = t | 0
@@ -63,10 +60,8 @@ const aleaMutRandom = randomFromMutFract32({
             seed1: g.seed1,
             seed2: g.seed2,
         } // Do not use object spreading. Emitted helper hurts perfs.
-    }
-})
+    },
 
-const aleaRandomFactory = randomFactoryFrom({
     fromUint8Array (seed: Uint8Array): AleaState {
         const hashes = mashes(seed, 3)
         const seed0 = asFract32(hashes[0])
@@ -75,13 +70,3 @@ const aleaRandomFactory = randomFactoryFrom({
         return { carry: INITIAL_CARRY, seed0, seed1, seed2 }
     },
 })
-
-const aleaRandomStreamFactory = srandomStreamFactoryFrom(aleaMutRandom, aleaRandomFactory)
-
-const aleaRandom = randomFrom(aleaMutRandom)
-
-export const alea: Random<AleaState> & RandomFactory<AleaState> & RandomStreamFactory<AleaState> = {
-    ...aleaRandom,
-    ...aleaRandomFactory,
-    ...aleaRandomStreamFactory
-}
