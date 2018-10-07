@@ -11,7 +11,11 @@ export type fract32 = f64
 export type fract53 = f64
 
 // Extrenums
+/** @internal */
 export const U32_TOP = 2 ** 32 - 1 >>> 0
 
+/** @internal */
 export const I32_BOTTOM = - (2 ** 31) | 0
+
+/** @internal */
 export const I32_TOP = 2 ** 31 - 1 | 0

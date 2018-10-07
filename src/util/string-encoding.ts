@@ -7,6 +7,7 @@ import { u32 } from "../util/number"
 const nativeEncodeString = (s: string): Uint8Array => (new TextEncoder()).encode(s)
 
 /**
+ * @internal
  * NOTE: Use TextEncoder#encode if available.
  *
  * @param s string to encode
@@ -21,6 +22,7 @@ export function encodeString (s: string): Uint8Array {
 }
 
 /**
+ * @internal
  * Encode a string as a Uint8Array with native encoder if available or
  * using teh function encodeString.
  *
