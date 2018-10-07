@@ -44,3 +44,18 @@ test("alea-is-deterministic", (t) => {
         t.is(rand.nextU32(), expected)
     }
 })
+
+test("alea-proper-copy-on-write", (t) => {
+    // The purpose of this test is to detect changes on state which should be
+    // immutable. We prevent modifications on these objetcs. By preventing
+    // modifications, the sequence of generated randoms is no longer correct.
+
+    let g = Object.freeze(alea.from("seed"))
+    for (const expected of sample) {
+        const res = alea.u32(g)
+
+        t.is(res[0], expected)
+
+        g = Object.freeze(res[1])
+    }
+})
