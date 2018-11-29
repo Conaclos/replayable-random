@@ -2,9 +2,10 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32, i32, f64 } from "../util/number"
+import { u32, i32, f64, isI32, isU32 } from "../util/number"
 import { mashes } from "../util/mash"
 import { Random, randomFrom } from "../core/random"
+import { isObject } from "../util/data-validation"
 import { asFract32, asU32 } from "../util/number-conversion"
 
 /**
@@ -30,7 +31,7 @@ import { asFract32, asU32 } from "../util/number-conversion"
 
 export interface UheState {
     carry: i32 // non-negative
-    seeds: Uint32Array // non-negative floats
+    seeds: Uint32Array // non-negative naturals
     phase: u32 // from 0 to seeds.length - 1
 }
 
@@ -68,6 +69,12 @@ function pregenerate (g: UheState): void {
 }
 
 export const uhe: Random<UheState> = randomFrom({
+    isValid (x: unknown): x is UheState {
+        return isObject<UheState>(x) && isI32(x.carry) && x.carry >= 0 &&
+            Array.isArray(x.seeds) && x.seeds.every(isU32) &&
+            isU32(x.phase) && x.phase < x.seeds.length
+    },
+
     mutU32 (g: UheState): u32 {
         const seeds = g.seeds
         let phase = g.phase

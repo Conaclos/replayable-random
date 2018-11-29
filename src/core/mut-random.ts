@@ -33,6 +33,13 @@ export interface MutRandom <S> {
      */
     readonly smartCopy: (this: void, g: Readonly<S>, n: u32) => S
 
+// Guard
+    /**
+     * @param x candidate to test
+     * @return Is `x' a valid generator state?
+     */
+    readonly isValid: (this: void, x: unknown) => x is S
+
 // Random generation
     /**
      * Atomic generation: 1
@@ -84,18 +91,18 @@ export interface MutRandom <S> {
 /**
  * @internal
  */
-export type Fract32BasedMutRandom <S> = Pick<MutRandom<S>, "mutFract32" | "smartCopy" | "fromUint8Array">
+export type Fract32BasedMutRandom <S> = Pick<MutRandom<S>, "mutFract32" | "smartCopy" | "fromUint8Array" | "isValid">
 
 /**
  * @internal
  */
-export type U32BasedMutRandom <S> = Pick<MutRandom<S>, "mutU32" | "smartCopy" | "fromUint8Array">
+export type U32BasedMutRandom <S> = Pick<MutRandom<S>, "mutU32" | "smartCopy" | "fromUint8Array" | "isValid">
 
 type MutRandomBase <S> = Fract32BasedMutRandom<S> & U32BasedMutRandom<S>
 
 const mutRandomFromBase =
-    <S> ({ mutFract32, mutU32, fromUint8Array, smartCopy }: MutRandomBase<S>): MutRandom<S> => ({
-        mutU32, mutFract32, smartCopy, fromUint8Array,
+    <S> ({ mutFract32, mutU32, fromUint8Array, smartCopy, isValid }: MutRandomBase<S>): MutRandom<S> => ({
+        mutU32, mutFract32, smartCopy, fromUint8Array, isValid,
 
         from: (seed: string) => fromUint8Array(stringAsUint8Array(seed)),
 
@@ -109,16 +116,16 @@ const mutRandomFromBase =
     })
 
 const randomFromMutFract32 =
-    <S> ({ mutFract32, smartCopy, fromUint8Array }: Fract32BasedMutRandom<S>): MutRandom<S> =>
+    <S> ({ mutFract32, smartCopy, fromUint8Array, isValid }: Fract32BasedMutRandom<S>): MutRandom<S> =>
         mutRandomFromBase({
-            mutFract32, smartCopy, fromUint8Array,
+            mutFract32, smartCopy, fromUint8Array, isValid,
             mutU32: (g) => asU32(mutFract32(g)),
         })
 
 const randomFromMutU32 =
-    <S> ({ mutU32, smartCopy, fromUint8Array }: U32BasedMutRandom<S>): MutRandom<S> =>
+    <S> ({ mutU32, smartCopy, fromUint8Array, isValid }: U32BasedMutRandom<S>): MutRandom<S> =>
         mutRandomFromBase({
-            mutU32, smartCopy, fromUint8Array,
+            mutU32, smartCopy, fromUint8Array, isValid,
             mutFract32: (g) => asFract32(mutU32(g)),
         })
 

@@ -1,8 +1,11 @@
 
 import test from "ava"
 
-import { I32_BOTTOM, I32_TOP, u32, U32_TOP } from "../../src/util/number"
-import { asU32, asFract32, asI32, asU32Between, asI32Between, asI54, asFract53 } from "../../src/util/number-conversion"
+import { I32_BOTTOM, I32_TOP, U32_TOP } from "../../src/util/number"
+import {
+    asU32, asI32, asI54,
+    asU32Between, asI32Between,
+} from "../../src/util/number-conversion"
 
 const U32_MID = 2 ** 31
 

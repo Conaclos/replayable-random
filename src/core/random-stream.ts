@@ -25,6 +25,21 @@ export class RandomStream <S> {
     }
 
     /**
+     * NOTE: Use the stream-random factory `streamFromPlaon' instead.
+     *
+     * @param x
+     * @param generator stateless gnerator
+     * @return stream from `x', or undefined if `x' is not valid.
+     */
+    static fromPlain <S> (x: unknown, generator: MutRandom<S>): RandomStream<S> | undefined {
+        if (generator.isValid(x)) {
+            return new RandomStream(x, generator)
+        } else {
+            return undefined
+        }
+    }
+
+    /**
      * Internal mutated state.
      */
     private readonly state: S

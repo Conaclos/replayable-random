@@ -2,9 +2,10 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, fract32, f64 } from "../util/number"
+import { i32, fract32, f64, isI32, isNonNegFract32 } from "../util/number"
 import { mashes } from "../util/mash"
 import { Random, randomFrom } from "../core/random"
+import { isObject } from "../util/data-validation"
 import { asFract32 } from "../util/number-conversion"
 
 /**
@@ -42,7 +43,13 @@ const MULTIPLIER = 2_091_639
 
 const INITIAL_CARRY = 1
 
-export const alea: Random<AleaState> = randomFrom({
+export const aleaMutBase = {
+    isValid (x: unknown): x is AleaState {
+        return isObject<AleaState>(x) && isI32(x.carry) && x.carry >= 0 &&
+            isNonNegFract32(x.seed0) && isNonNegFract32(x.seed1) &&
+            isNonNegFract32(x.seed2)
+    },
+
     mutFract32 (g: AleaState): fract32 {
         const t: f64 = MULTIPLIER * g.seed0 + asFract32(g.carry)
         g.carry = t | 0
@@ -69,4 +76,6 @@ export const alea: Random<AleaState> = randomFrom({
         const seed2 = asFract32(hashes[2])
         return { carry: INITIAL_CARRY, seed0, seed1, seed2 }
     },
-})
+}
+
+export const alea: Random<AleaState> = randomFrom(aleaMutBase)

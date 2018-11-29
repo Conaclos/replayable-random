@@ -24,6 +24,13 @@ export interface Random <S> {
      */
     readonly fromUint8Array: (this: void, seed: Uint8Array) => Readonly<S>
 
+// Guard
+    /**
+     * @param x candidate to test
+     * @return Is `x' a valid generator state?
+     */
+    readonly isValid: (this: void, x: unknown) => x is S
+
 // Stream factory
     /**
      * @param seed
@@ -42,6 +49,12 @@ export interface Random <S> {
      * @return Random generator using seed to produce deterministic randoms
      */
     readonly streamFromUint8Array: (this: void, seed: Uint8Array) => RandomStream<S>
+
+    /**
+     * @param x
+     * @return Random generator from `x', or undefined if `x' is not valid.
+     */
+    readonly streamFromPlain: (this: void, x: unknown) => RandomStream<S> | undefined
 
 // Random generation
     /**
@@ -92,9 +105,9 @@ export interface Random <S> {
 }
 
 function randomFromMut <S> (mutRand: MutRandom<S>): Random<S> {
-    const { fromUint8Array, from, smartCopy, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 } = mutRand
+    const { fromUint8Array, from, smartCopy, isValid, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 } = mutRand
     return {
-        fromUint8Array, from,
+        fromUint8Array, from, isValid,
 
         streamFrom: (seed) =>
             new RandomStream(from(seed), mutRand),
@@ -104,6 +117,8 @@ function randomFromMut <S> (mutRand: MutRandom<S>): Random<S> {
 
         streamFromUint8Array: (seed) =>
             new RandomStream(fromUint8Array(seed), mutRand),
+
+        streamFromPlain: (x) => RandomStream.fromPlain(x, mutRand),
 
         u32: (g) => {
             const copied = smartCopy(g, 1)
