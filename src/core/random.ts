@@ -29,7 +29,7 @@ export interface Random <S> {
      * @param x candidate to test
      * @return Is `x' a valid generator state?
      */
-    readonly isValid: (this: void, x: unknown) => x is S
+    readonly isValid: (this: void, x: unknown) => x is Readonly<S>
 
 // Stream factory
     /**
