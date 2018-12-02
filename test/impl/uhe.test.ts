@@ -52,11 +52,12 @@ test("uhe-proper-copy-on-write", (t) => {
     // The purpose of this test is to detect changes on state which should be
     // immutable.
 
-    let g = Object.freeze(uhe.from("seed"))
+    let g = uhe.from("seed")
     for (const expected of sample) {
         const plainCopy = JSON.parse(JSON.stringify(g))
-        uhe.u32(g)
+        const res = uhe.u32(g)
         const plain = JSON.parse(JSON.stringify(g))
         t.deepEqual(plain, plainCopy)
+        g = res[1]
     }
 })

@@ -52,11 +52,12 @@ test("kybos-proper-copy-on-write", (t) => {
     // The purpose of this test is to detect changes on state which should be
     // immutable.
 
-    let g = Object.freeze(kybos.from("seed"))
+    let g = kybos.from("seed")
     for (const expected of sample) {
         const plainCopy = JSON.parse(JSON.stringify(g))
-        kybos.u32(g)
+        const res = kybos.u32(g)
         const plain = JSON.parse(JSON.stringify(g))
         t.deepEqual(plain, plainCopy)
+        g = res[1]
     }
 })

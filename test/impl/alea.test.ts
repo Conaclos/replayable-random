@@ -52,11 +52,12 @@ test("alea-proper-copy-on-write", (t) => {
     // The purpose of this test is to detect changes on state which should be
     // immutable.
 
-    let g = Object.freeze(alea.from("seed"))
+    let g = alea.from("seed")
     for (const expected of sample) {
         const plainCopy = JSON.parse(JSON.stringify(g))
-        alea.u32(g)
+        const res = alea.u32(g)
         const plain = JSON.parse(JSON.stringify(g))
         t.deepEqual(plain, plainCopy)
+        g = res[1]
     }
 })
