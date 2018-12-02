@@ -34,16 +34,17 @@ export const DEFAULT_MASH_N = 0xEFC8_249D
  * @param input
  * @return hash (can also be used as the next internal state)
  */
-export const mash = (n: u32, input: Uint8Array): u32 => {
-    for (const v of input) {
-        n = n + v >>> 0
+export const mash = (n: f64, input: Uint8Array): f64 => {
+    const inputLength = input.length
+    for (let i = 0; i < inputLength; i++) {
+        n = n + input[i]
         let h: f64 = 0.02519603282416938 * n
         n = h >>> 0
         h = h - n
         h = h * n
         n = h >>> 0
         h = h - n
-        n = n + asU32(h) >>> 0
+        n = n + asU32(h)
     }
     return n
 }
@@ -61,14 +62,15 @@ export const mashes = (input: Uint8Array, count: u32): Uint32Array => {
     let prev = DEFAULT_MASH_N
     for (let i = 0; i < count; i++) {
         prev = mash(prev, DEFAULT_MASH_INPUT)
-        result[i] = prev
+        result[i] = prev >>> 0
     }
     for (let i = 0; i < count; i++) {
         prev = mash(prev, input)
-        if (result[i] >= prev) {
-            result[i] = result[i] - prev
+        const v = prev >>> 0
+        if (result[i] >= v) {
+            result[i] = result[i] - v
         } else {
-            result[i] = asU32(asFract32(result[i] - prev) + 1)
+            result[i] = asU32(asFract32(result[i] - v) + 1)
         }
     }
     return result
