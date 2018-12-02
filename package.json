@@ -52,7 +52,7 @@
     "husky": "^1.0.0-rc.15",
     "standard-version": "^4.4.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.2"
   },
   "ava": {
     "files": [
