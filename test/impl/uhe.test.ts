@@ -50,21 +50,13 @@ test("uhe-is-deterministic", (t) => {
 
 test("uhe-proper-copy-on-write", (t) => {
     // The purpose of this test is to detect changes on state which should be
-    // immutable. We prevent modifications on these objetcs. By preventing
-    // modifications, the sequence of generated randoms is no longer correct.
-
-    // Object.freeze has no effect on typed array.
-    // We have to manually detect unwanted changes.
+    // immutable.
 
     let g = Object.freeze(uhe.from("seed"))
     for (const expected of sample) {
-        const prevSeeds = g.seeds
-        const prevSeedsRef = new Uint32Array(prevSeeds)
-        const res = uhe.u32(g)
-
-        t.is(res[0], expected)
-        t.deepEqual(prevSeeds, prevSeedsRef)
-
-        g = Object.freeze(res[1])
+        const plainCopy = JSON.parse(JSON.stringify(g))
+        uhe.u32(g)
+        const plain = JSON.parse(JSON.stringify(g))
+        t.deepEqual(plain, plainCopy)
     }
 })
