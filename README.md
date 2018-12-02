@@ -146,7 +146,8 @@ Coming soon...
 | Name    | Entropy    | Period    | Author  |
 |---------|------------|-----------|---------|
 | `alea`  | 96 bits    | ~ 2^116   | Baagøe  |
-|`uhe`    | 1536 bits  | ~ 2^1556  | Gibson  |
+| `kybos` | 256 bits   | ?         | Baagøe  |
+| `uhe`   | 1536 bits  | ~ 2^1556  | Gibson  |
 
 
 # Related projects

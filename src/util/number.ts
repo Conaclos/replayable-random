@@ -3,6 +3,7 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 // Number types
+export type u4 = number
 export type u32 = number
 export type i32 = number
 export type i54 = number
