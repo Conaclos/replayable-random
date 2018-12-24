@@ -3,7 +3,7 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 import { i32, u32, i54, fract32, fract53, U32_TOP } from "../util/number"
-import { MutRandom, Fract32BasedMutRandom, U32BasedMutRandom, mutRandomFrom } from "./mut-random"
+import { MutRandom } from "./mut-random"
 import { RandomStream } from "./random-stream"
 
 /**
@@ -36,25 +36,13 @@ export interface Random <S> {
      * @param seed
      * @return Random generator using seed to produce deterministic randoms
      */
-    readonly streamFrom: (this: void, seed: string) => RandomStream<S>
+    readonly streamFrom: (this: void, seed: string) => RandomStream
 
     /**
      * @param state generator state
      * @return Random generator using an existing generator's state
      */
-    readonly streamFromState: (this: void, state: Readonly<S>) => RandomStream<S>
-
-    /**
-     * @param seed
-     * @return Random generator using seed to produce deterministic randoms
-     */
-    readonly streamFromUint8Array: (this: void, seed: Uint8Array) => RandomStream<S>
-
-    /**
-     * @param x
-     * @return Random generator from `x', or undefined if `x' is not valid.
-     */
-    readonly streamFromPlain: (this: void, x: unknown) => RandomStream<S> | undefined
+    readonly streamFromState: (this: void, state: Readonly<S>) => RandomStream
 
 // Random generation
     /**
@@ -104,57 +92,55 @@ export interface Random <S> {
     readonly fract53: (this: void, g: Readonly<S>) => [fract53, Readonly<S>]
 }
 
-function randomFromMut <S> (mutRand: MutRandom<S>): Random<S> {
-    const { fromUint8Array, from, smartCopy, isValid, mutU32, mutI54, mutU32Between, mutI32Between, mutFract32, mutFract53 } = mutRand
+/**
+ * @param proto
+ * @return new object using proto as prototype.
+ */
+const prototypeFrom: <T extends object> (proto: T) => T = Object.create
+
+export function randomFrom <S> (mutRand: MutRandom<S>): Random<S> {
+    const {
+        fromUint8Array, from, smartCopy, isValid,
+        nextU32, nextI54, nextU32Between, nextI32Between,
+        nextFract32, nextFract53
+    } = mutRand
     return {
         fromUint8Array, from, isValid,
 
-        streamFrom: (seed) =>
-            new RandomStream(from(seed), mutRand),
+        streamFrom: (seed) => Object.assign(prototypeFrom(mutRand), from(seed)),
 
-        streamFromState: (state) => // deeply copy state to protect internal state
-            new RandomStream(smartCopy(state, U32_TOP), mutRand),
-
-        streamFromUint8Array: (seed) =>
-            new RandomStream(fromUint8Array(seed), mutRand),
-
-        streamFromPlain: (x) => RandomStream.fromPlain(x, mutRand),
+        streamFromState: (state) =>
+            Object.assign(prototypeFrom(mutRand), smartCopy(state, U32_TOP)),
+                // deeply copy state to protect internal state
 
         u32: (g) => {
             const copied = smartCopy(g, 1)
-            return [mutU32(copied), copied]
+            return [nextU32.call(copied), copied]
         },
 
         fract32: (g) => {
             const copied = smartCopy(g, 1)
-            return [mutFract32(copied), copied]
+            return [nextFract32.call(copied), copied]
         },
 
         u32Between: (l, exclusiveU) => (g) => {
             const copied = smartCopy(g, 1)
-            return [mutU32Between(l, exclusiveU, copied), copied]
+            return [nextU32Between.call(copied, l, exclusiveU), copied]
         },
 
         i32Between: (l, exclusiveU) => (g) => {
             const copied = smartCopy(g, 1)
-            return [mutI32Between(l, exclusiveU, copied), copied]
+            return [nextI32Between.call(copied, l, exclusiveU), copied]
         },
 
         i54: (g) => {
             const copied = smartCopy(g, 2)
-            return [mutI54(copied), copied]
+            return [nextI54.call(copied), copied]
         },
 
         fract53: (g) => {
             const copied = smartCopy(g, 2)
-            return [mutFract53(copied), copied]
+            return [nextFract53.call(copied), copied]
         },
     }
-}
-
-/**
- * @internal
- */
-export function randomFrom <S> (partMutRand: Fract32BasedMutRandom<S> | U32BasedMutRandom<S>): Random<S> {
-    return randomFromMut(mutRandomFrom(partMutRand))
 }

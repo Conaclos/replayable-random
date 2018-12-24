@@ -4,6 +4,7 @@
 
 import { u32, i32, f64, isI32, isU32 } from "../util/number"
 import { mashes } from "../util/mash"
+import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
 import { asFract32, asU32 } from "../util/number-conversion"
@@ -68,23 +69,23 @@ function pregenerate (g: UheState): void {
     g.carry = carry
 }
 
-export const uhe: Random<UheState> = randomFrom({
+export const mutUhe = mutRandomFrom({
     isValid (x: unknown): x is UheState {
         return isObject<UheState>(x) && isI32(x.carry) && x.carry >= 0 &&
             Array.isArray(x.seeds) && x.seeds.every(isU32) &&
             isU32(x.phase) && x.phase < x.seeds.length
     },
 
-    mutU32 (g: UheState): u32 {
-        const seeds = g.seeds
-        let phase = g.phase
+    nextU32 (this: UheState): u32 {
+        const seeds = this.seeds
+        let phase = this.phase
         if (phase === seeds.length) {
             // All previously generated randoms were consumed.
             // Generate the next ones.
-            pregenerate(g)
+            pregenerate(this)
             phase = 0
         }
-        g.phase = phase + 1 >>> 0
+        this.phase = phase + 1 >>> 0
         return seeds[phase]
     },
 
@@ -106,3 +107,5 @@ export const uhe: Random<UheState> = randomFrom({
         return { carry: INITIAL_CARRY, seeds, phase: seeds.length }
     },
 })
+
+export const uhe: Random<UheState> = randomFrom(mutUhe)

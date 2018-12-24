@@ -123,14 +123,17 @@ const i2 = gen.nextI32Between(-4, 5)
 const f = gen.nextFract32()
 ```
 
-Note that you can backup the generator's state and start where you stopped the last time:
+Note that you can backup the generator's state and start where you stopped
+ the last time:
 
 ```ts
-// get a snapshot of the internal generator's state
-const snapshot = gen.stateSnapshot()
+// get a snapshot of the generator's state
+const snapshot = JSON.parse(JSON.stringify(gen))
 
-// start from a given generator's state
-const gen2 = alea.streamFromState(snapshot)
+// start from a given snapshot
+if (alea.isValid(snapshot)) {
+    const gen2 = alea.streamFromState(snapshot)
+}
 ```
 
 See [`RandomStream`](src/core/random-stream.ts) for all available methods.

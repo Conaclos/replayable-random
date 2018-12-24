@@ -4,7 +4,8 @@
 
 import { i32, fract32, f64, isI32, isNonNegFract32 } from "../util/number"
 import { mashes } from "../util/mash"
-import { Random, randomFrom } from "../core/random"
+import { mutRandomFrom } from "../core.1/mut-random"
+import { Random, randomFrom } from "../core.1/random"
 import { isObject } from "../util/data-validation"
 import { asFract32 } from "../util/number-conversion"
 
@@ -43,21 +44,21 @@ const MULTIPLIER = 2_091_639
 
 const INITIAL_CARRY = 1
 
-export const aleaMutBase = {
+export const mutAlea = mutRandomFrom({
     isValid (x: unknown): x is AleaState {
         return isObject<AleaState>(x) && isI32(x.carry) && x.carry >= 0 &&
             isNonNegFract32(x.seed0) && isNonNegFract32(x.seed1) &&
             isNonNegFract32(x.seed2)
     },
 
-    mutFract32 (g: AleaState): fract32 {
-        const t: f64 = MULTIPLIER * g.seed0 + asFract32(g.carry)
-        g.carry = t | 0
+    nextFract32 (this: AleaState): fract32 {
+        const t: f64 = MULTIPLIER * this.seed0 + asFract32(this.carry)
+        this.carry = t | 0
         // seeds' rotation
-        g.seed0 = g.seed1
-        g.seed1 = g.seed2
-        g.seed2 = t - g.carry // new computed seed
-        return g.seed2
+        this.seed0 = this.seed1
+        this.seed1 = this.seed2
+        this.seed2 = t - this.carry // new computed seed
+        return this.seed2
     },
 
     smartCopy (g: Readonly<AleaState>): AleaState {
@@ -76,6 +77,6 @@ export const aleaMutBase = {
         const seed2 = asFract32(hashes[2])
         return { carry: INITIAL_CARRY, seed0, seed1, seed2 }
     },
-}
+})
 
-export const alea: Random<AleaState> = randomFrom(aleaMutBase)
+export const alea: Random<AleaState> = randomFrom(mutAlea)

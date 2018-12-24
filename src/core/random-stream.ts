@@ -2,105 +2,44 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, u32, i54, fract32, fract53, U32_TOP } from "../util/number"
-import { MutRandom } from "./mut-random"
+import { i32, u32, i54, fract32, fract53 } from "../util/number"
 
 /**
- * Stateful seeded random generator based on a stateless version of the genrator.
- * The generic type corresponds to the generator state's type.
- *
+ * Stateful seeded random generator.
  * The state is mutated every time a new random is generated.
  */
-export class RandomStream <S> {
-// Implemtation
-    /**
-     * NOTE: Use a stream-random factory instead.
-     *
-     * @param state initial state (will be mutated)
-     * @param generator stateless gnerator
-     */
-    constructor (state: S, generator: MutRandom<S>) {
-        this.state = state
-        this.generator = generator
-    }
-
-    /**
-     * NOTE: Use the stream-random factory `streamFromPlaon' instead.
-     *
-     * @param x
-     * @param generator stateless gnerator
-     * @return stream from `x', or undefined if `x' is not valid.
-     */
-    static fromPlain <S> (x: unknown, generator: MutRandom<S>): RandomStream<S> | undefined {
-        if (generator.isValid(x)) {
-            return new RandomStream(x, generator)
-        } else {
-            return undefined
-        }
-    }
-
-    /**
-     * Internal mutated state.
-     */
-    private readonly state: S
-
-    /**
-     * Stateless generator.
-     */
-    private readonly generator: MutRandom<S>
-
-// State
-    /**
-     * @return snapshot of the current generator's state
-     */
-    stateSnapshot (): Readonly<S> {
-        return this.generator.smartCopy(this.state, U32_TOP)
-    }
-
-// Generation
+export interface RandomStream {
     /**
      * @return a random unsigned integer (32bits)
      */
-    nextU32 (): u32 {
-        return this.generator.mutU32(this.state)
-    }
+    readonly nextU32: () => u32
 
     /**
      * @return a random safe integer (54bits)
      */
-    nextI54 (): i54 {
-        return this.generator.mutI54(this.state)
-    }
+    readonly nextI54: () => i54
 
     /**
      * @param l lower bound (inclusive)
      * @param exclusiveU upper bound (exclusive)
      * @return a random unsigned integer (32bits) in interval [l, exclusiveU[
      */
-    nextU32Between ( l: u32, exclusiveU: u32): u32 {
-        return this.generator.mutU32Between(l, exclusiveU, this.state)
-    }
+    readonly nextU32Between: (l: u32, exclusiveU: u32) => u32
 
     /**
      * @param l lower bound (inclusive)
      * @param exclusiveU upper bound (exclusive)
      * @return a random integer (32bits) in interval [l, exclusiveU[
      */
-    nextI32Between (l: i32, exclusiveU: i32): i32 {
-        return this.generator.mutI32Between(l, exclusiveU, this.state)
-    }
+    readonly nextI32Between: (l: i32, exclusiveU: i32) => i32
 
     /**
      * @return a random float in interval [0, 1[ using 32 significant bits
      */
-    nextFract32 (): fract32 {
-        return this.generator.mutFract32(this.state)
-    }
+    readonly nextFract32: () => fract32
 
     /**
      * @return a random float in interval [0, 1[ using 53 significant bits
      */
-    nextFract53 (): fract53 {
-        return this.generator.mutFract53(this.state)
-    }
+    readonly nextFract53: () => fract53
 }

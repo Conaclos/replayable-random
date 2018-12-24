@@ -4,10 +4,11 @@
 
 import { u32, fract32, f64, isNonNegFract32, isU32 } from "../util/number"
 import { mashes } from "../util/mash"
+import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
 import { asFract32, asU32Between } from "../util/number-conversion"
-import { AleaState, aleaMutBase } from "./alea"
+import { AleaState, mutAlea } from "./alea"
 import { U4_EMPTY_SET, add, has } from "../util/u4-set"
 
 /**
@@ -48,7 +49,7 @@ function pregenerate (g: KybosState): void {
     let phase = g.phase
     let consumable = 0
     do {
-        let seed = seeds[phase] - aleaMutBase.mutFract32(g)
+        let seed = seeds[phase] - mutAlea.nextFract32.call(g)
         if (seed < 0) {
             seed = seed + 1
         }
@@ -61,25 +62,26 @@ function pregenerate (g: KybosState): void {
     g.consumable = consumable
 }
 
-export const kybos: Random<KybosState> = randomFrom({
+export const mutKybos = mutRandomFrom({
     isValid (x: unknown): x is KybosState {
         return isObject<KybosState>(x) &&
             Array.isArray(x.seeds) && x.seeds.every(isNonNegFract32) &&
-            isU32(x.phase) && x.phase >= 0 &&
-            isU32(x.consumable) && x.consumable >= 0 &&
-            aleaMutBase.isValid(x)
+            isU32(x.phase) && x.phase < x.seeds.length &&
+            isU32(x.consumable) && x.consumable < x.seeds.length &&
+                // WARNING: cannot check wheither consumable is really correct
+                mutAlea.isValid(x)
     },
 
-    mutFract32 (g: KybosState): fract32 {
-        if (g.consumable === 0) {
+    nextFract32 (this: KybosState): fract32 {
+        if (this.consumable === 0) {
             // All previously generated randoms were consumed.
             // Generate the next ones.
-            pregenerate(g)
+            pregenerate(this)
         }
 
-        const { seeds, phase } = g
-        g.phase = asU32Between(0, seeds.length, seeds[phase])
-        g.consumable--
+        const { seeds, phase } = this
+        this.phase = asU32Between(0, seeds.length, seeds[phase])
+        this.consumable--
         return seeds[phase]
     },
 
@@ -106,7 +108,7 @@ export const kybos: Random<KybosState> = randomFrom({
         const seed2 = asFract32(hashes[2])
         const seeds = new Float64Array(ORDER)
         for (let i = 0; i < seeds.length; i++) {
-            seeds[i] = asFract32(hashes[i + 3])
+            seeds[i] = asFract32(hashes[3 + i])
         }
         return {
             seed0, seed1, seed2, seeds,
@@ -114,3 +116,5 @@ export const kybos: Random<KybosState> = randomFrom({
         }
     },
 })
+
+export const kybos: Random<KybosState> = randomFrom(mutKybos)
