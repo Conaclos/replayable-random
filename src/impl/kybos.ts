@@ -22,7 +22,8 @@ import { U4_EMPTY_SET, add, has } from "../util/u4-set"
  * Notet that a fract32 is encoded as a float 64.
  */
 
-export interface KybosState extends AleaState {
+export interface KybosState {
+    subprng: AleaState
     seeds: Float64Array // non-negative fract32
     phase: u32 // from 0 to seeds.length - 1
     consumable: u32 // from 0 to seeds.length - 1
@@ -42,14 +43,14 @@ const ORDER = 8
  * @param g generator's state [Mutated]
  */
 function pregenerate (g: KybosState): void {
-    const seeds = g.seeds
+    const { seeds, subprng } = g
     const length = seeds.length
 
     let bitset = add(U4_EMPTY_SET, g.phase)
     let phase = g.phase
     let consumable = 0
     do {
-        let seed = seeds[phase] - mutAlea.nextFract32.call(g)
+        let seed = seeds[phase] - mutAlea.nextFract32.call(subprng)
         if (seed < 0) {
             seed = seed + 1
         }
@@ -69,7 +70,7 @@ export const mutKybos = mutRandomFrom({
             isU32(x.phase) && x.phase < x.seeds.length &&
             isU32(x.consumable) && x.consumable < x.seeds.length &&
                 // WARNING: cannot check wheither consumable is really correct
-                mutAlea.isValid(x)
+                mutAlea.isValid(x.subprng)
     },
 
     nextFract32 (this: KybosState): fract32 {
@@ -86,18 +87,15 @@ export const mutKybos = mutRandomFrom({
     },
 
     smartCopy (g: Readonly<KybosState>, n: u32): KybosState {
-        let seeds = g.seeds
+        let { seeds, subprng } = g
         if (n > g.consumable) {
             seeds = new Float64Array(seeds)
+            subprng = mutAlea.smartCopy(g.subprng, n)
         }
         return {
-            carry: g.carry,
-            seed0: g.seed0,
-            seed1: g.seed1,
-            seed2: g.seed2,
+            seeds, subprng,
             phase: g.phase,
             consumable: g.consumable,
-            seeds,
         } // Do not use object spreading. Emitted helper hurts perfs.
     },
 
@@ -111,8 +109,11 @@ export const mutKybos = mutRandomFrom({
             seeds[i] = asFract32(hashes[3 + i])
         }
         return {
-            seed0, seed1, seed2, seeds,
-            carry: INITIAL_CARRY, phase: 0, consumable: 0
+            seeds, phase: 0, consumable: 0,
+            subprng: {
+                seed0, seed1, seed2,
+                carry: INITIAL_CARRY,
+            },
         }
     },
 })
