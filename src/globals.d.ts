@@ -17,7 +17,7 @@ interface Console {
 
     readonly trace: () => void
 
-    readonly count: (label?: string) => uint32
+    readonly count: (label?: string) => number
 
 // Logging
     readonly info: (message?: string, ...objs: any[]) => void
