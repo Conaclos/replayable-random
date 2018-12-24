@@ -131,8 +131,9 @@ Note that you can backup the generator's state and start where you stopped
 const snapshot = JSON.parse(JSON.stringify(gen))
 
 // start from a given snapshot
-if (alea.isValid(snapshot)) {
-    const gen2 = alea.streamFromState(snapshot)
+const stream = alea.streamFromPlain(snapshot)
+if (stream !== undefined) {
+    // useable stream
 }
 ```
 

@@ -26,6 +26,12 @@ export interface MutRandom <S> {
      */
     readonly fromUint8Array: (this: void, seed: Uint8Array) => Readonly<S>
 
+    /**
+     * @param x
+     * @return generator's state from `x', or undefined if `x' is not valid.
+     */
+    readonly fromPlain: (this: void, x: unknown) => Readonly<S> | undefined
+
 // Duplication
     /**
      * @param n maximum number of atomic generations that can be performed on
@@ -33,13 +39,6 @@ export interface MutRandom <S> {
      * @return (partial) duplica of g
      */
     readonly smartCopy: (this: void, g: Readonly<S>, n: u32) => S
-
-// Guard
-    /**
-     * @param x candidate to test
-     * @return Is `x' a valid generator state?
-     */
-    readonly isValid: (this: void, x: unknown) => x is S
 
 // Random generation
     /**
@@ -84,10 +83,10 @@ export interface MutRandom <S> {
 }
 
 export type Fract32MutRandom <S> = Pick<MutRandom<S>,
-    "nextFract32" | "smartCopy" | "fromUint8Array" | "isValid">
+    "nextFract32" | "smartCopy" | "fromUint8Array" | "fromPlain">
 
 export type U32BMutRandom <S> = Pick<MutRandom<S>,
-    "nextU32" | "smartCopy" | "fromUint8Array" | "isValid">
+    "nextU32" | "smartCopy" | "fromUint8Array" | "fromPlain">
 
 export function mutRandomFrom <S>
     (partMutRand: Fract32MutRandom<S> | U32BMutRandom<S>): MutRandom<S> {
@@ -106,9 +105,9 @@ export function mutRandomFrom <S>
         }
     }
 
-    const { fromUint8Array, isValid, smartCopy } = partMutRand
+    const { fromUint8Array, fromPlain, smartCopy } = partMutRand
     return {
-        fromUint8Array, isValid, smartCopy,
+        fromUint8Array, fromPlain, smartCopy,
         nextU32, nextFract32,
 
         from: (seed) => fromUint8Array(stringAsUint8Array(seed)),

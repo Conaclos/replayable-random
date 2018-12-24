@@ -61,3 +61,12 @@ test("uhe-proper-copy-on-write", (t) => {
         g = res[1]
     }
 })
+
+test("uhe-is-valid", (t) => {
+    const rand = uhe.streamFrom("seed")
+    for (let i = 0; i < REPETITION_NUMBER; i++) {
+        t.truthy(uhe.fromPlain(rand))
+        t.truthy(uhe.fromPlain(JSON.parse(JSON.stringify(rand))))
+        rand.nextU32()
+    }
+})

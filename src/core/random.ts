@@ -24,12 +24,11 @@ export interface Random <S> {
      */
     readonly fromUint8Array: (this: void, seed: Uint8Array) => Readonly<S>
 
-// Guard
     /**
-     * @param x candidate to test
-     * @return Is `x' a valid generator state?
+     * @param x
+     * @return generator's state from `x', or undefined if `x' is not valid.
      */
-    readonly isValid: (this: void, x: unknown) => x is Readonly<S>
+    readonly fromPlain: (this: void, x: unknown) => Readonly<S> | undefined
 
 // Stream factory
     /**
@@ -43,6 +42,13 @@ export interface Random <S> {
      * @return Random generator using an existing generator's state
      */
     readonly streamFromState: (this: void, state: Readonly<S>) => RandomStream
+
+    /**
+     * @param x
+     * @return stream from `x', or undefined if `x' is not valid.
+     */
+    readonly streamFromPlain: (this: void, x: unknown) =>
+        RandomStream | undefined
 
 // Random generation
     /**
@@ -100,18 +106,26 @@ const prototypeFrom: <T extends object> (proto: T) => T = Object.create
 
 export function randomFrom <S> (mutRand: MutRandom<S>): Random<S> {
     const {
-        fromUint8Array, from, smartCopy, isValid,
+        fromUint8Array, from, smartCopy, fromPlain,
         nextU32, nextI54, nextU32Between, nextI32Between,
         nextFract32, nextFract53
     } = mutRand
     return {
-        fromUint8Array, from, isValid,
+        fromUint8Array, from, fromPlain,
 
         streamFrom: (seed) => Object.assign(prototypeFrom(mutRand), from(seed)),
 
         streamFromState: (state) =>
             Object.assign(prototypeFrom(mutRand), smartCopy(state, U32_TOP)),
                 // deeply copy state to protect internal state
+
+        streamFromPlain: (x) => {
+            const o = fromPlain(x)
+            if (o !== undefined) {
+                return Object.assign(prototypeFrom(mutRand), o)
+            }
+            return undefined
+        },
 
         u32: (g) => {
             const copied = smartCopy(g, 1)

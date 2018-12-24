@@ -7,8 +7,9 @@ import { mashes } from "../util/mash"
 import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
+import { arayFrom } from "../util/typed-array"
 import { asFract32, asU32Between } from "../util/number-conversion"
-import { AleaState, mutAlea } from "./alea"
+import { ALEA_TYPE_LABEL, AleaState, mutAlea } from "./alea"
 import { U4_EMPTY_SET, add, has } from "../util/u4-set"
 
 /**
@@ -22,7 +23,10 @@ import { U4_EMPTY_SET, add, has } from "../util/u4-set"
  * Notet that a fract32 is encoded as a float 64.
  */
 
+export const KYBOS_TYPE_LABEL: "kybos" = "kybos"
+
 export interface KybosState {
+    readonly type: typeof KYBOS_TYPE_LABEL
     subprng: AleaState
     seeds: Float64Array // non-negative fract32
     phase: u32 // from 0 to seeds.length - 1
@@ -64,15 +68,6 @@ function pregenerate (g: KybosState): void {
 }
 
 export const mutKybos = mutRandomFrom({
-    isValid (x: unknown): x is KybosState {
-        return isObject<KybosState>(x) &&
-            Array.isArray(x.seeds) && x.seeds.every(isNonNegFract32) &&
-            isU32(x.phase) && x.phase < x.seeds.length &&
-            isU32(x.consumable) && x.consumable < x.seeds.length &&
-                // WARNING: cannot check wheither consumable is really correct
-                mutAlea.isValid(x.subprng)
-    },
-
     nextFract32 (this: KybosState): fract32 {
         if (this.consumable === 0) {
             // All previously generated randoms were consumed.
@@ -93,7 +88,8 @@ export const mutKybos = mutRandomFrom({
             subprng = mutAlea.smartCopy(g.subprng, n)
         }
         return {
-            seeds, subprng,
+            type: KYBOS_TYPE_LABEL,
+            subprng, seeds,
             phase: g.phase,
             consumable: g.consumable,
         } // Do not use object spreading. Emitted helper hurts perfs.
@@ -109,12 +105,32 @@ export const mutKybos = mutRandomFrom({
             seeds[i] = asFract32(hashes[3 + i])
         }
         return {
-            seeds, phase: 0, consumable: 0,
+            type: KYBOS_TYPE_LABEL,
             subprng: {
                 seed0, seed1, seed2,
-                carry: INITIAL_CARRY,
+                type: ALEA_TYPE_LABEL, carry: INITIAL_CARRY,
             },
+            seeds, phase: 0, consumable: 0,
         }
+    },
+
+    fromPlain (x: unknown): KybosState | undefined {
+        if (isObject<KybosState>(x) && x.type === KYBOS_TYPE_LABEL &&
+            isU32(x.phase) && isU32(x.consumable) && isObject(x.seeds)) {
+
+            const subprng = mutAlea.fromPlain(x.subprng)
+            const seeds = arayFrom(x.seeds, Float64Array, isNonNegFract32)
+
+            if (subprng !== undefined && seeds.length > 0 &&
+                x.phase < seeds.length && x.consumable < seeds.length) {
+
+                return {
+                    type: KYBOS_TYPE_LABEL,
+                    seeds, subprng, phase: x.phase, consumable: x.consumable,
+                }
+            }
+        }
+        return undefined
     },
 })
 

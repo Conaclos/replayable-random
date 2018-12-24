@@ -50,7 +50,7 @@ test("alea-is-deterministic", (t) => {
 
 test("alea-proper-copy-on-write", (t) => {
     // The purpose of this test is to detect changes on state which should be
-    // immutable.
+    // imnextable.
 
     let g = alea.from("seed")
     for (const expected of sample) {
@@ -59,5 +59,14 @@ test("alea-proper-copy-on-write", (t) => {
         const plain = JSON.parse(JSON.stringify(g))
         t.deepEqual(plain, plainCopy)
         g = res[1]
+    }
+})
+
+test("alea-is-valid", (t) => {
+    const rand = alea.streamFrom("seed")
+    for (let i = 0; i < REPETITION_NUMBER; i++) {
+        t.truthy(alea.fromPlain(rand))
+        t.truthy(alea.fromPlain(JSON.parse(JSON.stringify(rand))))
+        rand.nextU32()
     }
 })

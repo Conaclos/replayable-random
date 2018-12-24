@@ -4,8 +4,8 @@
 
 import { i32, fract32, f64, isI32, isNonNegFract32 } from "../util/number"
 import { mashes } from "../util/mash"
-import { mutRandomFrom } from "../core.1/mut-random"
-import { Random, randomFrom } from "../core.1/random"
+import { mutRandomFrom } from "../core/mut-random"
+import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
 import { asFract32 } from "../util/number-conversion"
 
@@ -28,7 +28,10 @@ import { asFract32 } from "../util/number-conversion"
  * we have a period of: a * 2^(n - 1) - 1 ~= 2^21 * 2^95 = 2^116
  */
 
+export const ALEA_TYPE_LABEL: "alea" = "alea"
+
 export interface AleaState {
+    readonly type: typeof ALEA_TYPE_LABEL
     carry: i32 // non-negative
     seed0: fract32 // non-negative
     seed1: fract32 // non-negative
@@ -45,12 +48,6 @@ const MULTIPLIER = 2_091_639
 const INITIAL_CARRY = 1
 
 export const mutAlea = mutRandomFrom({
-    isValid (x: unknown): x is AleaState {
-        return isObject<AleaState>(x) && isI32(x.carry) && x.carry >= 0 &&
-            isNonNegFract32(x.seed0) && isNonNegFract32(x.seed1) &&
-            isNonNegFract32(x.seed2)
-    },
-
     nextFract32 (this: AleaState): fract32 {
         const t: f64 = MULTIPLIER * this.seed0 + asFract32(this.carry)
         this.carry = t | 0
@@ -63,6 +60,7 @@ export const mutAlea = mutRandomFrom({
 
     smartCopy (g: Readonly<AleaState>): AleaState {
         return {
+            type: ALEA_TYPE_LABEL,
             carry: g.carry,
             seed0: g.seed0,
             seed1: g.seed1,
@@ -75,7 +73,24 @@ export const mutAlea = mutRandomFrom({
         const seed0 = asFract32(hashes[0])
         const seed1 = asFract32(hashes[1])
         const seed2 = asFract32(hashes[2])
-        return { carry: INITIAL_CARRY, seed0, seed1, seed2 }
+        return {
+            type: ALEA_TYPE_LABEL,
+            carry: INITIAL_CARRY,
+            seed0, seed1, seed2,
+        }
+    },
+
+    fromPlain (x: unknown): AleaState | undefined {
+        if (isObject<AleaState>(x) && x.type === ALEA_TYPE_LABEL &&
+            isI32(x.carry) && x.carry > 0 && isNonNegFract32(x.seed0) &&
+            isNonNegFract32(x.seed1) && isNonNegFract32(x.seed2)) {
+
+            return {
+                type: ALEA_TYPE_LABEL, carry: x.carry,
+                seed0: x.seed0, seed1: x.seed1, seed2: x.seed2
+            }
+        }
+        return undefined
     },
 })
 

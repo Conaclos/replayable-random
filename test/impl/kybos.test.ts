@@ -61,3 +61,12 @@ test("kybos-proper-copy-on-write", (t) => {
         g = res[1]
     }
 })
+
+test("kybos-from-plain", (t) => {
+    const rand = kybos.streamFrom("seed")
+    for (let i = 0; i < REPETITION_NUMBER; i++) {
+        t.truthy(kybos.fromPlain(rand))
+        t.truthy(kybos.fromPlain(JSON.parse(JSON.stringify(rand))))
+        rand.nextU32()
+    }
+})

@@ -7,6 +7,7 @@ import { mashes } from "../util/mash"
 import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
+import { arayFrom } from "../util/typed-array"
 import { asFract32, asU32 } from "../util/number-conversion"
 
 /**
@@ -30,7 +31,10 @@ import { asFract32, asU32 } from "../util/number-conversion"
  * this implementation and the original one.
  */
 
+ export const UHE_TYPE_LABEL: "uhe" = "uhe"
+
 export interface UheState {
+    readonly type: typeof UHE_TYPE_LABEL
     carry: i32 // non-negative
     seeds: Uint32Array // non-negative naturals
     phase: u32 // from 0 to seeds.length - 1
@@ -70,12 +74,6 @@ function pregenerate (g: UheState): void {
 }
 
 export const mutUhe = mutRandomFrom({
-    isValid (x: unknown): x is UheState {
-        return isObject<UheState>(x) && isI32(x.carry) && x.carry >= 0 &&
-            Array.isArray(x.seeds) && x.seeds.every(isU32) &&
-            isU32(x.phase) && x.phase < x.seeds.length
-    },
-
     nextU32 (this: UheState): u32 {
         const seeds = this.seeds
         let phase = this.phase
@@ -99,12 +97,31 @@ export const mutUhe = mutRandomFrom({
             // will modify the seeds array. Thus we copy it.
             seeds = new Uint32Array(seeds)
         }
-        return { carry, seeds, phase }
+        return { type: UHE_TYPE_LABEL, carry, seeds, phase }
     },
 
     fromUint8Array (seed: Uint8Array): UheState {
         const seeds = mashes(seed, ORDER)
-        return { carry: INITIAL_CARRY, seeds, phase: seeds.length }
+        return {
+            type: UHE_TYPE_LABEL, seeds,
+            carry: INITIAL_CARRY, phase: seeds.length,
+        }
+    },
+
+    fromPlain (x: unknown): UheState | undefined {
+        if (isObject<UheState>(x) && x.type === UHE_TYPE_LABEL &&
+            isI32(x.carry) && x.carry > 0 && isU32(x.phase) &&
+            isObject(x.seeds)) {
+
+            const seeds = arayFrom(x.seeds, Uint32Array, isU32)
+            if (seeds.length > 0 && x.phase <= seeds.length) {
+                return {
+                    type: UHE_TYPE_LABEL, seeds: Uint32Array.from(seeds),
+                    carry: x.carry, phase: x.phase,
+                }
+            }
+        }
+        return undefined
     },
 })
 
