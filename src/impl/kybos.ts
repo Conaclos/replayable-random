@@ -19,7 +19,7 @@ import { U4_EMPTY_SET, add, has } from "../util/u4-set"
  * Mirror: https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
  *
  * Kybos uses 256 bits of entropy stored as eight fract32.
- * Notet hat a fract32 is encoded as a float 64.
+ * Notet that a fract32 is encoded as a float 64.
  */
 
 export interface KybosState extends AleaState {
