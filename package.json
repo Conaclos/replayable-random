@@ -38,6 +38,7 @@
     "lint:fix": "tslint --project tsconfig.json --fix",
     "perf": "rm -rf .generated && tsc && node .generated/perf/impl/alea.perf.js && node .generated/perf/impl/uhe.perf.js",
     "test": "rm -rf .generated && tsc && ava",
+    "test:data": "rm -rf .generated && tsc && node .generated/script/sample/$PRNG-sample.script.js >| test/_data/$PRNG-sample.ts",
     "release:pre": "npm run test && npm run lint && npm run build",
     "release": "npm run release:pre && standard-version --sign --no-verify",
     "commitmsg": "commitlint  -e  $GIT_PARAMS",

@@ -16,5 +16,5 @@
 
     "pretty": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "perf/**/*.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "perf/**/*.ts", "script/*.ts", "script/sample/alea-sample.script.ts", "script/sample/uhe-sample.script.ts", "script/sample/kybos-sample.script.ts", "script/sample/script-util.ts"]
 }
