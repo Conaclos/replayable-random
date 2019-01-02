@@ -60,7 +60,7 @@
       ".generated/test/**/*.test.js"
     ],
     "sources": [
-      "test"
+      ".generated/src/**/*.js"
     ]
   },
   "dependencies": {
