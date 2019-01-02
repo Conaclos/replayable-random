@@ -2,15 +2,15 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32, fract32, f64, isNonNegFract32, isU32 } from "../util/number"
-import { mashes } from "../util/mash"
 import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
-import { arayFrom } from "../util/typed-array"
+import { mashes } from "../util/mash"
+import { fract32, isNonNegFract32, isU32, u32 } from "../util/number"
 import { asFract32, asU32Between } from "../util/number-conversion"
-import { ALEA_TYPE_LABEL, AleaState, mutAlea } from "./alea"
-import { U4_EMPTY_SET, add, has } from "../util/u4-set"
+import { arayFrom } from "../util/typed-array"
+import { add, has, U4_EMPTY_SET } from "../util/u4-set"
+import { AleaState, ALEA_TYPE_LABEL, mutAlea } from "./alea"
 
 /**
  * Kybos: Johannes Baagøe's PRNG that combines
@@ -46,7 +46,7 @@ const ORDER = 8
  * without erasing freshly genarted.
  * @param g generator's state [Mutated]
  */
-function pregenerate (g: KybosState): void {
+function pregenerate(g: KybosState): void {
     const { seeds, subprng } = g
     const length = seeds.length
 
@@ -63,12 +63,12 @@ function pregenerate (g: KybosState): void {
         bitset = add(bitset, phase)
         phase = asU32Between(0, length, seeds[phase])
         consumable++
-    } while (! has(bitset, phase))
+    } while (!has(bitset, phase))
     g.consumable = consumable
 }
 
 export const mutKybos = mutRandomFrom({
-    nextFract32 (this: KybosState): fract32 {
+    nextFract32(this: KybosState): fract32 {
         if (this.consumable === 0) {
             // All previously generated randoms were consumed.
             // Generate the next ones.
@@ -81,7 +81,7 @@ export const mutKybos = mutRandomFrom({
         return seeds[phase]
     },
 
-    smartCopy (g: Readonly<KybosState>, n: u32): KybosState {
+    smartCopy(g: Readonly<KybosState>, n: u32): KybosState {
         let { seeds, subprng } = g
         if (n > g.consumable) {
             seeds = new Float64Array(seeds)
@@ -89,13 +89,14 @@ export const mutKybos = mutRandomFrom({
         }
         return {
             type: KYBOS_TYPE_LABEL,
-            subprng, seeds,
+            subprng,
+            seeds,
             phase: g.phase,
             consumable: g.consumable,
         } // Do not use object spreading. Emitted helper hurts perfs.
     },
 
-    fromUint8Array (seed: Uint8Array): KybosState {
+    fromUint8Array(seed: Uint8Array): KybosState {
         const hashes = mashes(seed, 3 + ORDER)
         const seed0 = asFract32(hashes[0])
         const seed1 = asFract32(hashes[1])
@@ -107,26 +108,41 @@ export const mutKybos = mutRandomFrom({
         return {
             type: KYBOS_TYPE_LABEL,
             subprng: {
-                seed0, seed1, seed2,
-                type: ALEA_TYPE_LABEL, carry: INITIAL_CARRY,
+                seed0,
+                seed1,
+                seed2,
+                type: ALEA_TYPE_LABEL,
+                carry: INITIAL_CARRY,
             },
-            seeds, phase: 0, consumable: 0,
+            seeds,
+            phase: 0,
+            consumable: 0,
         }
     },
 
-    fromPlain (x: unknown): KybosState | undefined {
-        if (isObject<KybosState>(x) && x.type === KYBOS_TYPE_LABEL &&
-            isU32(x.phase) && isU32(x.consumable) && isObject(x.seeds)) {
-
+    fromPlain(x: unknown): KybosState | undefined {
+        if (
+            isObject<KybosState>(x) &&
+            x.type === KYBOS_TYPE_LABEL &&
+            isU32(x.phase) &&
+            isU32(x.consumable) &&
+            isObject(x.seeds)
+        ) {
             const subprng = mutAlea.fromPlain(x.subprng)
             const seeds = arayFrom(x.seeds, Float64Array, isNonNegFract32)
 
-            if (subprng !== undefined && seeds.length > 0 &&
-                x.phase < seeds.length && x.consumable < seeds.length) {
-
+            if (
+                subprng !== undefined &&
+                seeds.length > 0 &&
+                x.phase < seeds.length &&
+                x.consumable < seeds.length
+            ) {
                 return {
                     type: KYBOS_TYPE_LABEL,
-                    seeds, subprng, phase: x.phase, consumable: x.consumable,
+                    seeds,
+                    subprng,
+                    phase: x.phase,
+                    consumable: x.consumable,
                 }
             }
         }

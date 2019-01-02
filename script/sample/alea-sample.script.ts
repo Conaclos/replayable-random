@@ -1,4 +1,3 @@
-
 import { alea } from "../../src/impl/alea"
 import { sampleFrom } from "./sample-script-util"
 

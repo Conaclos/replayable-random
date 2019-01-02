@@ -2,7 +2,7 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, u32, i54, fract32, fract53, U32_TOP } from "../util/number"
+import { fract32, fract53, i32, i54, u32, U32_TOP } from "../util/number"
 import { MutRandom } from "./mut-random"
 import { RandomStream } from "./random-stream"
 
@@ -10,8 +10,8 @@ import { RandomStream } from "./random-stream"
  * Common interface for seeded random generators.
  * The generic type corresponds to the generator state's type.
  */
-export interface Random <S> {
-// State derivator
+export interface Random<S> {
+    // State derivator
     /**
      * @param seed
      * @return generator state using seed to produce deterministic generations
@@ -30,7 +30,7 @@ export interface Random <S> {
      */
     readonly fromPlain: (this: void, x: unknown) => Readonly<S> | undefined
 
-// Stream factory
+    // Stream factory
     /**
      * @param seed
      * @return Random generator using seed to produce deterministic randoms
@@ -47,10 +47,12 @@ export interface Random <S> {
      * @param x
      * @return stream from `x', or undefined if `x' is not valid.
      */
-    readonly streamFromPlain: (this: void, x: unknown) =>
-        RandomStream | undefined
+    readonly streamFromPlain: (
+        this: void,
+        x: unknown
+    ) => RandomStream | undefined
 
-// Random generation
+    // Random generation
     /**
      * @param g generator state
      * @return a random unsigned integer (32bits), and next generator state
@@ -70,8 +72,11 @@ export interface Random <S> {
      * @return a random unsigned integer (32bits) in interval [l, exclusiveU[,
      *      and next generator state
      */
-    readonly u32Between: (this: void, l: u32, exclusiveU: u32) =>
-        (this: void, g: Readonly<S>) => [u32, Readonly<S>]
+    readonly u32Between: (
+        this: void,
+        l: u32,
+        exclusiveU: u32
+    ) => (this: void, g: Readonly<S>) => [u32, Readonly<S>]
 
     /**
      * @param l lower bound (inclusive)
@@ -80,8 +85,11 @@ export interface Random <S> {
      * @return a random integer (32bits) in interval [l, exclusiveU[,
      *      and next generator state
      */
-    readonly i32Between: (this: void, l: i32, exclusiveU: i32) =>
-        (this: void, g: Readonly<S>) => [i32, Readonly<S>]
+    readonly i32Between: (
+        this: void,
+        l: i32,
+        exclusiveU: i32
+    ) => (this: void, g: Readonly<S>) => [i32, Readonly<S>]
 
     /**
      * @param g generator state
@@ -102,22 +110,31 @@ export interface Random <S> {
  * @param proto
  * @return new object using proto as prototype.
  */
-const prototypeFrom: <T extends object> (proto: T) => T = Object.create
+const prototypeFrom: <T extends object>(proto: T) => T = Object.create
 
-export function randomFrom <S> (mutRand: MutRandom<S>): Random<S> {
+export function randomFrom<S>(mutRand: MutRandom<S>): Random<S> {
     const {
-        fromUint8Array, from, smartCopy, fromPlain,
-        nextU32, nextI54, nextU32Between, nextI32Between,
-        nextFract32, nextFract53
+        fromUint8Array,
+        from,
+        smartCopy,
+        fromPlain,
+        nextU32,
+        nextI54,
+        nextU32Between,
+        nextI32Between,
+        nextFract32,
+        nextFract53,
     } = mutRand
     return {
-        fromUint8Array, from, fromPlain,
+        fromUint8Array,
+        from,
+        fromPlain,
 
         streamFrom: (seed) => Object.assign(prototypeFrom(mutRand), from(seed)),
 
         streamFromState: (state) =>
             Object.assign(prototypeFrom(mutRand), smartCopy(state, U32_TOP)),
-                // deeply copy state to protect internal state
+        // deeply copy state to protect internal state
 
         streamFromPlain: (x) => {
             const o = fromPlain(x)

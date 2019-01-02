@@ -1,9 +1,10 @@
-
 import test from "ava"
 
 import {
-    mash, mashes,
-    DEFAULT_MASH_INPUT, DEFAULT_MASH_N,
+    mash,
+    mashes,
+    DEFAULT_MASH_INPUT,
+    DEFAULT_MASH_N,
 } from "../../src/util/mash"
 import { isU32 } from "../../src/util/number"
 

@@ -1,8 +1,13 @@
-
 import test from "ava"
 import { alea } from "../../src/"
 import * as SAMPLE from "../_data/alea-sample.json"
-import { mCopyOnWrite, mFromPlain, mSample, mWellTyped, mWellTypedStream } from "./test-macro"
+import {
+    mCopyOnWrite,
+    mFromPlain,
+    mSample,
+    mWellTyped,
+    mWellTypedStream,
+} from "./test-macro"
 
 test("alea", mWellTypedStream(alea))
 

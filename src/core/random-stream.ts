@@ -2,7 +2,7 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, u32, i54, fract32, fract53 } from "../util/number"
+import { fract32, fract53, i32, i54, u32 } from "../util/number"
 
 /**
  * Stateful seeded random generator.

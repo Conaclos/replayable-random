@@ -2,12 +2,12 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32, f64 } from "./number"
-import { asU32, asFract32 } from "./number-conversion"
+import { f64, u32 } from "./number"
+import { asFract32, asU32 } from "./number-conversion"
 
 const SPACE_CHAR_CODE = 32
 export const DEFAULT_MASH_INPUT = Uint8Array.of(SPACE_CHAR_CODE)
-export const DEFAULT_MASH_N = 0xEFC8_249D
+export const DEFAULT_MASH_N = 0xefc8_249d
 
 /**
  * Based on Johannes Baagoe's hash function.

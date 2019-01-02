@@ -13,13 +13,13 @@ export type fract53 = f64
 
 // Extrenums
 /** @internal */
-export const U32_TOP = 2 ** 32 - 1 >>> 0
+export const U32_TOP = (2 ** 32 - 1) >>> 0
 
 /** @internal */
-export const I32_BOTTOM = - (2 ** 31) | 0
+export const I32_BOTTOM = -(2 ** 31) | 0
 
 /** @internal */
-export const I32_TOP = 2 ** 31 - 1 | 0
+export const I32_TOP = (2 ** 31 - 1) | 0
 
 /**
  * @internal
@@ -27,8 +27,7 @@ export const I32_TOP = 2 ** 31 - 1 | 0
  * @return Is `n' an u32?
  */
 export const isU32 = (n: unknown): n is u32 =>
-    typeof n === "number" && Number.isSafeInteger(n) &&
-    0 <= n && n <= U32_TOP
+    typeof n === "number" && Number.isSafeInteger(n) && 0 <= n && n <= U32_TOP
 
 /**
  * @internal
@@ -36,8 +35,10 @@ export const isU32 = (n: unknown): n is u32 =>
  * @return Is `n' an i32?
  */
 export const isI32 = (n: unknown): n is i32 =>
-    typeof n === "number" &&  Number.isSafeInteger(n) &&
-    I32_BOTTOM <= n && n <= I32_TOP
+    typeof n === "number" &&
+    Number.isSafeInteger(n) &&
+    I32_BOTTOM <= n &&
+    n <= I32_TOP
 
 const SHIFT_LEFT_32 = 2 ** 32
 
@@ -48,7 +49,11 @@ const SHIFT_LEFT_32 = 2 ** 32
  * @param n
  * @return Is `n' a fract32?
  */
-export function isNonNegFract32 (n: unknown): n is fract32 {
-    return typeof n === "number" && 0 <= n && n < 1 &&
-        (n * SHIFT_LEFT_32 - (n * SHIFT_LEFT_32 >>> 0)) === 0
+export function isNonNegFract32(n: unknown): n is fract32 {
+    return (
+        typeof n === "number" &&
+        0 <= n &&
+        n < 1 &&
+        n * SHIFT_LEFT_32 - ((n * SHIFT_LEFT_32) >>> 0) === 0
+    )
 }

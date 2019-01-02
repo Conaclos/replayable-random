@@ -2,11 +2,11 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { i32, fract32, f64, isI32, isNonNegFract32 } from "../util/number"
-import { mashes } from "../util/mash"
 import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
+import { mashes } from "../util/mash"
+import { f64, fract32, i32, isI32, isNonNegFract32 } from "../util/number"
 import { asFract32 } from "../util/number-conversion"
 
 /**
@@ -48,7 +48,7 @@ const MULTIPLIER = 2_091_639
 const INITIAL_CARRY = 1
 
 export const mutAlea = mutRandomFrom({
-    nextFract32 (this: AleaState): fract32 {
+    nextFract32(this: AleaState): fract32 {
         const t: f64 = MULTIPLIER * this.seed0 + asFract32(this.carry)
         this.carry = t | 0
         // seeds' rotation
@@ -58,7 +58,7 @@ export const mutAlea = mutRandomFrom({
         return this.seed2
     },
 
-    smartCopy (g: Readonly<AleaState>): AleaState {
+    smartCopy(g: Readonly<AleaState>): AleaState {
         return {
             type: ALEA_TYPE_LABEL,
             carry: g.carry,
@@ -68,7 +68,7 @@ export const mutAlea = mutRandomFrom({
         } // Do not use object spreading. Emitted helper hurts perfs.
     },
 
-    fromUint8Array (seed: Uint8Array): AleaState {
+    fromUint8Array(seed: Uint8Array): AleaState {
         const hashes = mashes(seed, 3)
         const seed0 = asFract32(hashes[0])
         const seed1 = asFract32(hashes[1])
@@ -76,18 +76,28 @@ export const mutAlea = mutRandomFrom({
         return {
             type: ALEA_TYPE_LABEL,
             carry: INITIAL_CARRY,
-            seed0, seed1, seed2,
+            seed0,
+            seed1,
+            seed2,
         }
     },
 
-    fromPlain (x: unknown): AleaState | undefined {
-        if (isObject<AleaState>(x) && x.type === ALEA_TYPE_LABEL &&
-            isI32(x.carry) && x.carry > 0 && isNonNegFract32(x.seed0) &&
-            isNonNegFract32(x.seed1) && isNonNegFract32(x.seed2)) {
-
+    fromPlain(x: unknown): AleaState | undefined {
+        if (
+            isObject<AleaState>(x) &&
+            x.type === ALEA_TYPE_LABEL &&
+            isI32(x.carry) &&
+            x.carry > 0 &&
+            isNonNegFract32(x.seed0) &&
+            isNonNegFract32(x.seed1) &&
+            isNonNegFract32(x.seed2)
+        ) {
             return {
-                type: ALEA_TYPE_LABEL, carry: x.carry,
-                seed0: x.seed0, seed1: x.seed1, seed2: x.seed2
+                type: ALEA_TYPE_LABEL,
+                carry: x.carry,
+                seed0: x.seed0,
+                seed1: x.seed1,
+                seed2: x.seed2,
             }
         }
         return undefined

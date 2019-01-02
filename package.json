@@ -34,6 +34,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.main.json && tsc -p tsconfig.module.json && tsc -p tsconfig.es2015.json && tsc -p tsconfig.types.json",
     "check": "tsc --noEmit",
+    "format": "prettier --write perf/**/*.ts script/**/*.ts src/**/*.ts test/**/*.ts",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "tslint --project tsconfig.json --fix",
     "perf": "rm -rf .generated && tsc && node .generated/perf/impl/$PRNG.perf.js",
@@ -42,7 +43,7 @@
     "release:pre": "npm run test && npm run lint && npm run build",
     "release": "npm run release:pre && standard-version --sign --no-verify",
     "commitmsg": "commitlint  -e  $GIT_PARAMS",
-    "prepush": "npm test && npm run lint"
+    "precommit": "npm test && npm run lint"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.2.1",
@@ -51,6 +52,7 @@
     "ava": "^1.0.0",
     "benchmark": "^2.1.4",
     "husky": "^1.3.1",
+    "prettier": "1.15.3",
     "standard-version": "^4.4.0",
     "tslint": "^5.12.0",
     "typescript": "^3.2"

@@ -2,13 +2,13 @@
 //
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32, i32, f64, isI32, isU32 } from "../util/number"
-import { mashes } from "../util/mash"
 import { mutRandomFrom } from "../core/mut-random"
 import { Random, randomFrom } from "../core/random"
 import { isObject } from "../util/data-validation"
-import { arayFrom } from "../util/typed-array"
+import { mashes } from "../util/mash"
+import { f64, i32, isI32, isU32, u32 } from "../util/number"
 import { asFract32, asU32 } from "../util/number-conversion"
+import { arayFrom } from "../util/typed-array"
 
 /**
  * Ultra-High-Entropy (UHE) PRNG proposed by Gibson Research Corporation.
@@ -31,7 +31,7 @@ import { asFract32, asU32 } from "../util/number-conversion"
  * this implementation and the original one.
  */
 
- export const UHE_TYPE_LABEL: "uhe" = "uhe"
+export const UHE_TYPE_LABEL: "uhe" = "uhe"
 
 export interface UheState {
     readonly type: typeof UHE_TYPE_LABEL
@@ -61,7 +61,7 @@ const ORDER = 48
  * Here, the maximum number is equal to ORDER.
  * @param g generator's state [Mutated]
  */
-function pregenerate (g: UheState): void {
+function pregenerate(g: UheState): void {
     const seeds = g.seeds
     const length = seeds.length
     let carry = g.carry
@@ -74,7 +74,7 @@ function pregenerate (g: UheState): void {
 }
 
 export const mutUhe = mutRandomFrom({
-    nextU32 (this: UheState): u32 {
+    nextU32(this: UheState): u32 {
         const seeds = this.seeds
         let phase = this.phase
         if (phase === seeds.length) {
@@ -83,11 +83,11 @@ export const mutUhe = mutRandomFrom({
             pregenerate(this)
             phase = 0
         }
-        this.phase = phase + 1 >>> 0
+        this.phase = (phase + 1) >>> 0
         return seeds[phase]
     },
 
-    smartCopy (g: Readonly<UheState>, n: u32): UheState {
+    smartCopy(g: Readonly<UheState>, n: u32): UheState {
         const carry = g.carry
         const phase = g.phase
         let seeds = g.seeds
@@ -100,24 +100,32 @@ export const mutUhe = mutRandomFrom({
         return { type: UHE_TYPE_LABEL, carry, seeds, phase }
     },
 
-    fromUint8Array (seed: Uint8Array): UheState {
+    fromUint8Array(seed: Uint8Array): UheState {
         const seeds = mashes(seed, ORDER)
         return {
-            type: UHE_TYPE_LABEL, seeds,
-            carry: INITIAL_CARRY, phase: seeds.length,
+            type: UHE_TYPE_LABEL,
+            seeds,
+            carry: INITIAL_CARRY,
+            phase: seeds.length,
         }
     },
 
-    fromPlain (x: unknown): UheState | undefined {
-        if (isObject<UheState>(x) && x.type === UHE_TYPE_LABEL &&
-            isI32(x.carry) && x.carry > 0 && isU32(x.phase) &&
-            isObject(x.seeds)) {
-
+    fromPlain(x: unknown): UheState | undefined {
+        if (
+            isObject<UheState>(x) &&
+            x.type === UHE_TYPE_LABEL &&
+            isI32(x.carry) &&
+            x.carry > 0 &&
+            isU32(x.phase) &&
+            isObject(x.seeds)
+        ) {
             const seeds = arayFrom(x.seeds, Uint32Array, isU32)
             if (seeds.length > 0 && x.phase <= seeds.length) {
                 return {
-                    type: UHE_TYPE_LABEL, seeds: Uint32Array.from(seeds),
-                    carry: x.carry, phase: x.phase,
+                    type: UHE_TYPE_LABEL,
+                    seeds: Uint32Array.from(seeds),
+                    carry: x.carry,
+                    phase: x.phase,
                 }
             }
         }

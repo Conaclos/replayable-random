@@ -3,11 +3,12 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 /** @internal */
-export type NonFunctionNames <T> =
-{ [k in keyof T]: T[k] extends Function ? never : k }[keyof T]
+export type NonFunctionNames<T> = {
+    [k in keyof T]: T[k] extends Function ? never : k
+}[keyof T]
 
 /** @internal */
-export type Unknown <T> = { [k in NonFunctionNames<T>]?: unknown }
+export type Unknown<T> = { [k in NonFunctionNames<T>]?: unknown }
 
 /**
  * Example:
@@ -19,5 +20,5 @@ export type Unknown <T> = { [k in NonFunctionNames<T>]?: unknown }
  * @param x
  * @param Is `x' a non-null object?
  */
-export const isObject = <T> (x: unknown): x is Unknown<T> =>
+export const isObject = <T>(x: unknown): x is Unknown<T> =>
     typeof x === "object" && x !== null

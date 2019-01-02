@@ -1,10 +1,11 @@
-
 import test from "ava"
-
 import { I32_BOTTOM, I32_TOP, U32_TOP } from "../../src/util/number"
 import {
-    asU32, asI32, asI54,
-    asU32Between, asI32Between,
+    asI32,
+    asI32Between,
+    asI54,
+    asU32,
+    asU32Between,
 } from "../../src/util/number-conversion"
 
 const U32_MID = 2 ** 31
@@ -54,7 +55,7 @@ test("asU32Between-unit-interval", (t) => {
 test("asI32Between", (t) => {
     t.is(asI32Between(I32_BOTTOM, I32_TOP, 0), I32_BOTTOM)
     // U32_X - 1 because U32_TOP is excluded
-    t.is(asI32Between(I32_BOTTOM, I32_TOP, FRACT32_MID), - 1)
+    t.is(asI32Between(I32_BOTTOM, I32_TOP, FRACT32_MID), -1)
     t.is(asI32Between(I32_BOTTOM, I32_TOP, FRACT32_TOP), I32_TOP - 1)
 })
 
