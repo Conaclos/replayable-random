@@ -23,19 +23,19 @@ export interface MutRandom<S> {
      * @param seed
      * @return generator state using seed to produce deterministic generations
      */
-    readonly from: (this: void, seed: string) => Readonly<S>
+    readonly from: (this: void, seed: string) => S
 
     /**
      * @param seed
      * @return generator state using seed to produce deterministic generations
      */
-    readonly fromUint8Array: (this: void, seed: Uint8Array) => Readonly<S>
+    readonly fromUint8Array: (this: void, seed: Uint8Array) => S
 
     /**
      * @param x
      * @return generator's state from `x', or undefined if `x' is not valid.
      */
-    readonly fromPlain: (this: void, x: unknown) => Readonly<S> | undefined
+    readonly fromPlain: (this: void, x: unknown) => S | undefined
 
     // Duplication
     /**

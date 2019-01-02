@@ -30,13 +30,15 @@ import { asFract32 } from "../util/number-conversion"
 
 export const ALEA_TYPE_LABEL: "alea" = "alea"
 
-export interface AleaState {
+export interface MutAleaState {
     readonly type: typeof ALEA_TYPE_LABEL
     carry: i32 // non-negative
     seed0: fract32 // non-negative
     seed1: fract32 // non-negative
     seed2: fract32 // non-negative
 }
+
+export type AleaState = Readonly<MutAleaState>
 
 /**
  * Carefully chosen prime number.
@@ -48,7 +50,7 @@ const MULTIPLIER = 2_091_639
 const INITIAL_CARRY = 1
 
 export const mutAlea = mutRandomFrom({
-    nextFract32(this: AleaState): fract32 {
+    nextFract32(this: MutAleaState): fract32 {
         const t: f64 = MULTIPLIER * this.seed0 + asFract32(this.carry)
         this.carry = t | 0
         // seeds' rotation
@@ -58,7 +60,7 @@ export const mutAlea = mutRandomFrom({
         return this.seed2
     },
 
-    smartCopy(g: Readonly<AleaState>): AleaState {
+    smartCopy(g: AleaState): MutAleaState {
         return {
             type: ALEA_TYPE_LABEL,
             carry: g.carry,
@@ -68,7 +70,7 @@ export const mutAlea = mutRandomFrom({
         } // Do not use object spreading. Emitted helper hurts perfs.
     },
 
-    fromUint8Array(seed: Uint8Array): AleaState {
+    fromUint8Array(seed: Uint8Array): MutAleaState {
         const hashes = mashes(seed, 3)
         const seed0 = asFract32(hashes[0])
         const seed1 = asFract32(hashes[1])
@@ -82,7 +84,7 @@ export const mutAlea = mutRandomFrom({
         }
     },
 
-    fromPlain(x: unknown): AleaState | undefined {
+    fromPlain(x: unknown): MutAleaState | undefined {
         if (
             isObject<AleaState>(x) &&
             x.type === ALEA_TYPE_LABEL &&

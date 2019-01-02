@@ -9,6 +9,7 @@ import { RandomStream } from "./random-stream"
 /**
  * Common interface for seeded random generators.
  * The generic type corresponds to the generator state's type.
+ * Instances of this type should be immutable.
  */
 export interface Random<S> {
     // State derivator
@@ -16,19 +17,19 @@ export interface Random<S> {
      * @param seed
      * @return generator state using seed to produce deterministic generations
      */
-    readonly from: (this: void, seed: string) => Readonly<S>
+    readonly from: (this: void, seed: string) => S
 
     /**
      * @param seed
      * @return generator state using seed to produce deterministic generations
      */
-    readonly fromUint8Array: (this: void, seed: Uint8Array) => Readonly<S>
+    readonly fromUint8Array: (this: void, seed: Uint8Array) => S
 
     /**
      * @param x
      * @return generator's state from `x', or undefined if `x' is not valid.
      */
-    readonly fromPlain: (this: void, x: unknown) => Readonly<S> | undefined
+    readonly fromPlain: (this: void, x: unknown) => S | undefined
 
     // Stream factory
     /**
@@ -41,7 +42,7 @@ export interface Random<S> {
      * @param state generator state
      * @return Random generator using an existing generator's state
      */
-    readonly streamFromState: (this: void, state: Readonly<S>) => RandomStream
+    readonly streamFromState: (this: void, state: S) => RandomStream
 
     /**
      * @param x
@@ -57,13 +58,13 @@ export interface Random<S> {
      * @param g generator state
      * @return a random unsigned integer (32bits), and next generator state
      */
-    readonly u32: (this: void, g: Readonly<S>) => [u32, Readonly<S>]
+    readonly u32: (this: void, g: S) => [u32, S]
 
     /**
      * @param g generator state
      * @return a random safe integer (54bits), and next generator state
      */
-    readonly i54: (this: void, g: Readonly<S>) => [i54, Readonly<S>]
+    readonly i54: (this: void, g: S) => [i54, S]
 
     /**
      * @param l lower bound (inclusive)
@@ -76,7 +77,7 @@ export interface Random<S> {
         this: void,
         l: u32,
         exclusiveU: u32
-    ) => (this: void, g: Readonly<S>) => [u32, Readonly<S>]
+    ) => (this: void, g: S) => [u32, S]
 
     /**
      * @param l lower bound (inclusive)
@@ -89,21 +90,21 @@ export interface Random<S> {
         this: void,
         l: i32,
         exclusiveU: i32
-    ) => (this: void, g: Readonly<S>) => [i32, Readonly<S>]
+    ) => (this: void, g: S) => [i32, S]
 
     /**
      * @param g generator state
      * @return a random float in interval [0, 1[ using 32 significant bits,
      *      and next generator state
      */
-    readonly fract32: (this: void, g: Readonly<S>) => [fract32, Readonly<S>]
+    readonly fract32: (this: void, g: S) => [fract32, S]
 
     /**
      * @param g generator state
      * @return a random float in interval [0, 1[ using 53 significant bits,
      *      and a new generator state
      */
-    readonly fract53: (this: void, g: Readonly<S>) => [fract53, Readonly<S>]
+    readonly fract53: (this: void, g: S) => [fract53, S]
 }
 
 /**
@@ -112,7 +113,7 @@ export interface Random<S> {
  */
 const prototypeFrom: <T extends object>(proto: T) => T = Object.create
 
-export function randomFrom<S>(mutRand: MutRandom<S>): Random<S> {
+export function randomFrom<S>(mutRand: MutRandom<S>): Random<Readonly<S>> {
     const {
         fromUint8Array,
         from,

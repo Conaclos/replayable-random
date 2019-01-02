@@ -8,9 +8,9 @@ import { isObject } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { fract32, isNonNegFract32, isU32, u32 } from "../util/number"
 import { asFract32, asU32Between } from "../util/number-conversion"
-import { arayFrom } from "../util/typed-array"
+import { arayFrom, TypeableArray } from "../util/typed-array"
 import { add, has, U4_EMPTY_SET } from "../util/u4-set"
-import { AleaState, ALEA_TYPE_LABEL, mutAlea } from "./alea"
+import { ALEA_TYPE_LABEL, mutAlea, MutAleaState } from "./alea"
 
 /**
  * Kybos: Johannes Baagøe's PRNG that combines
@@ -25,13 +25,15 @@ import { AleaState, ALEA_TYPE_LABEL, mutAlea } from "./alea"
 
 export const KYBOS_TYPE_LABEL: "kybos" = "kybos"
 
-export interface KybosState {
+export interface MutKybosState {
     readonly type: typeof KYBOS_TYPE_LABEL
-    subprng: AleaState
-    seeds: Float64Array // non-negative fract32
+    subprng: MutAleaState
+    seeds: TypeableArray<fract32> // non-negative fract32
     phase: u32 // from 0 to seeds.length - 1
     consumable: u32 // from 0 to seeds.length - 1
 }
+
+export type KybosState = Readonly<MutKybosState>
 
 const INITIAL_CARRY = 1
 
@@ -46,7 +48,7 @@ const ORDER = 8
  * without erasing freshly genarted.
  * @param g generator's state [Mutated]
  */
-function pregenerate(g: KybosState): void {
+function pregenerate(g: MutKybosState): void {
     const { seeds, subprng } = g
     const length = seeds.length
 
@@ -68,7 +70,7 @@ function pregenerate(g: KybosState): void {
 }
 
 export const mutKybos = mutRandomFrom({
-    nextFract32(this: KybosState): fract32 {
+    nextFract32(this: MutKybosState): fract32 {
         if (this.consumable === 0) {
             // All previously generated randoms were consumed.
             // Generate the next ones.
@@ -81,7 +83,7 @@ export const mutKybos = mutRandomFrom({
         return seeds[phase]
     },
 
-    smartCopy(g: Readonly<KybosState>, n: u32): KybosState {
+    smartCopy(g: KybosState, n: u32): MutKybosState {
         let { seeds, subprng } = g
         if (n > g.consumable) {
             seeds = new Float64Array(seeds)
@@ -96,7 +98,7 @@ export const mutKybos = mutRandomFrom({
         } // Do not use object spreading. Emitted helper hurts perfs.
     },
 
-    fromUint8Array(seed: Uint8Array): KybosState {
+    fromUint8Array(seed: Uint8Array): MutKybosState {
         const hashes = mashes(seed, 3 + ORDER)
         const seed0 = asFract32(hashes[0])
         const seed1 = asFract32(hashes[1])
@@ -120,7 +122,7 @@ export const mutKybos = mutRandomFrom({
         }
     },
 
-    fromPlain(x: unknown): KybosState | undefined {
+    fromPlain(x: unknown): MutKybosState | undefined {
         if (
             isObject<KybosState>(x) &&
             x.type === KYBOS_TYPE_LABEL &&

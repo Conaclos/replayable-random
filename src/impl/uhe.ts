@@ -8,7 +8,7 @@ import { isObject } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { f64, i32, isI32, isU32, u32 } from "../util/number"
 import { asFract32, asU32 } from "../util/number-conversion"
-import { arayFrom } from "../util/typed-array"
+import { arayFrom, TypeableArray } from "../util/typed-array"
 
 /**
  * Ultra-High-Entropy (UHE) PRNG proposed by Gibson Research Corporation.
@@ -33,12 +33,14 @@ import { arayFrom } from "../util/typed-array"
 
 export const UHE_TYPE_LABEL: "uhe" = "uhe"
 
-export interface UheState {
+export interface MutUheState {
     readonly type: typeof UHE_TYPE_LABEL
     carry: i32 // non-negative
-    seeds: Uint32Array // non-negative naturals
+    seeds: TypeableArray<u32> // non-negative u32
     phase: u32 // from 0 to seeds.length - 1
 }
+
+export type UheState = Readonly<MutUheState>
 
 /**
  * Carefully chosen prime number.
@@ -61,8 +63,8 @@ const ORDER = 48
  * Here, the maximum number is equal to ORDER.
  * @param g generator's state [Mutated]
  */
-function pregenerate(g: UheState): void {
-    const seeds = g.seeds
+function pregenerate(g: MutUheState): void {
+    const { seeds } = g
     const length = seeds.length
     let carry = g.carry
     for (let i = 0; i < length; i++) {
@@ -74,7 +76,7 @@ function pregenerate(g: UheState): void {
 }
 
 export const mutUhe = mutRandomFrom({
-    nextU32(this: UheState): u32 {
+    nextU32(this: MutUheState): u32 {
         const seeds = this.seeds
         let phase = this.phase
         if (phase === seeds.length) {
@@ -87,7 +89,7 @@ export const mutUhe = mutRandomFrom({
         return seeds[phase]
     },
 
-    smartCopy(g: Readonly<UheState>, n: u32): UheState {
+    smartCopy(g: UheState, n: u32): MutUheState {
         const carry = g.carry
         const phase = g.phase
         let seeds = g.seeds
@@ -100,7 +102,7 @@ export const mutUhe = mutRandomFrom({
         return { type: UHE_TYPE_LABEL, carry, seeds, phase }
     },
 
-    fromUint8Array(seed: Uint8Array): UheState {
+    fromUint8Array(seed: Uint8Array): MutUheState {
         const seeds = mashes(seed, ORDER)
         return {
             type: UHE_TYPE_LABEL,
@@ -110,7 +112,7 @@ export const mutUhe = mutRandomFrom({
         }
     },
 
-    fromPlain(x: unknown): UheState | undefined {
+    fromPlain(x: unknown): MutUheState | undefined {
         if (
             isObject<UheState>(x) &&
             x.type === UHE_TYPE_LABEL &&
