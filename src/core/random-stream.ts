@@ -42,4 +42,16 @@ export interface RandomStream {
      * @return a random float in interval [0, 1[ using 53 significant bits
      */
     readonly nextFract53: () => fract53
+
+    /**
+     * @param n number of generated unsigned integer (8bits)
+     * @return array that contains a number of n unsigned integer (8bits)
+     */
+    readonly nextU8Array: (n: u32) => Uint8Array
+
+    /**
+     * @param n number of generated unsigned integer (32bits)
+     * @return array that contains a number of n unsigned integer (32bits)
+     */
+    readonly nextU32Array: (n: u32) => Uint32Array
 }

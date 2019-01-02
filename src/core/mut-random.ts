@@ -80,6 +80,20 @@ export interface MutRandom <S> {
      * @return a random float in interval [0, 1[ using 53 significant bits
      */
     readonly nextFract53: (this: S) => fract53
+
+    /**
+     * Atomic generation: (n + 3) / 4 >>> 0
+     * @param n number of generated unsigned integer (8bits)
+     * @return array that contains a number of n unsigned integer (8bits)
+     */
+    readonly nextU8Array: (this: S, n: u32) => Uint8Array
+
+    /**
+     * Atomic generation: n
+     * @param n number of generated unsigned integer (32bits)
+     * @return array that contains a number of n unsigned integer (32bits)
+     */
+    readonly nextU32Array: (this: S, n: u32) => Uint32Array
 }
 
 export type Fract32MutRandom <S> = Pick<MutRandom<S>,
@@ -105,10 +119,24 @@ export function mutRandomFrom <S>
         }
     }
 
+    const nextU32Array = function (this: S, n: u32): Uint32Array {
+        const result = new Uint32Array(n)
+        for (let i = 0; i < n; i++) {
+            result[i] = nextU32.call(this)
+        }
+        return result
+    }
+
+    const nextU8Array = function (this: S, n: u32): Uint8Array {
+        const u32Count = (n + 3) / 4 >>> 0
+        const u32Array = nextU32Array.call(this, u32Count)
+        return new Uint8Array(u32Array.buffer)
+    }
+
     const { fromUint8Array, fromPlain, smartCopy } = partMutRand
     return {
         fromUint8Array, fromPlain, smartCopy,
-        nextU32, nextFract32,
+        nextU32, nextFract32, nextU32Array, nextU8Array,
 
         from: (seed) => fromUint8Array(stringAsUint8Array(seed)),
 
