@@ -1,6 +1,6 @@
 {
   "name": "replayable-random",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reproducible sequences of pseudo random numbers for TypeScript and JavaScript",
   "keywords": [
     "alea",
