@@ -30,6 +30,8 @@ export const mWellTypedStream = <T>(rng: Random<T>) =>
             t.true(Number.isSafeInteger(rand.nextI54()))
             t.true(isNonNegFract32(rand.nextFract32()))
             t.true(isNonNegFract33(rand.nextFract53()))
+            t.is(rand.nextU32Array(5).length, 5)
+            t.is(rand.nextU8Array(5).length, 5)
         }
     })
 
@@ -43,6 +45,8 @@ export const mWellTyped = <T>(rng: Random<T>) =>
             t.true(Number.isSafeInteger(rng.i54(g)[0]))
             t.true(isNonNegFract32(rng.fract32(g)[0]))
             t.true(isNonNegFract33(rng.fract53(g)[0]))
+            t.is(rng.u32Array(5)(g)[0].length, 5)
+            t.is(rng.u8Array(5)(g)[0].length, 5)
             g = rng.fract32(g)[1]
         }
     })

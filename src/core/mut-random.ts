@@ -127,7 +127,7 @@ export function mutRandomFrom<S>({
     const nextU8Array = function(this: S, n: u32): Uint8Array {
         const u32Count = ((n + 3) / 4) >>> 0
         const u32Array = nextU32Array.call(this, u32Count)
-        return new Uint8Array(u32Array.buffer)
+        return new Uint8Array(u32Array.buffer, 0, n)
     }
 
     return {

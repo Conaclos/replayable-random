@@ -105,6 +105,22 @@ export interface Random<S> {
      *      and a new generator state
      */
     readonly fract53: (this: void, g: S) => [fract53, S]
+
+    /**
+     * @param n number of generated unsigned integer (8bits)
+     * @param g generator state
+     * @return array that contains a number of n unsigned integer (8bits),
+     *      and a new generator state
+     */
+    readonly u8Array: (this: void, n: u32) => (this: void, g: S) => [Uint8Array, S]
+
+    /**
+     * @param n number of generated unsigned integer (32bits)
+     * @param g generator state
+     * @return array that contains a number of n unsigned integer (32bits),
+     *      and a new generator state
+     */
+    readonly u32Array: (this: void, n: u32) => (this: void, g: S) => [Uint32Array, S]
 }
 
 /**
@@ -125,6 +141,8 @@ export function randomFrom<S>(mutRand: MutRandom<S>): Random<Readonly<S>> {
         nextI32Between,
         nextFract32,
         nextFract53,
+        nextU32Array,
+        nextU8Array
     } = mutRand
     return {
         fromUint8Array,
@@ -173,6 +191,16 @@ export function randomFrom<S>(mutRand: MutRandom<S>): Random<Readonly<S>> {
         fract53: (g) => {
             const copied = smartCopy(g, 2)
             return [nextFract53.call(copied), copied]
+        },
+
+        u32Array: (n) => (g) => {
+            const copied = smartCopy(g, n)
+            return [nextU32Array.call(copied, n), copied]
+        },
+
+        u8Array: (n) => (g) => {
+            const copied = smartCopy(g, ((n + 3) / 4) >>> 0)
+            return [nextU8Array.call(copied, n), copied]
         },
     }
 }
