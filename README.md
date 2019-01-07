@@ -162,7 +162,7 @@ All following projects enable to generate reproducible pseudo-random numbers.
 
 [prando][prando] provides a mutable Object Oriented API that uses a *xorshift PRNG* based on the triplet combination invented by George Marsaglia.
 
-[pure-rand][pure-rand] provides an immutable Object Oriented API and two PRNGs: *Mersenne Twister*, *Linear Congruential*.
+[pure-rand][prand] provides an immutable Object Oriented API and two PRNGs: *Mersenne Twister*, *Linear Congruential*.
 
 [random-js][rand-js] provides an impure functional API and implements one PRNG: *Mersenne Twister*. It provides a large set of primites and proposes non-uniform distribution of random generations.
 
