@@ -106,26 +106,14 @@ export type Fract32MutRandom<S> = Pick<
     "nextFract32" | "smartCopy" | "fromUint8Array" | "fromPlain"
 >
 
-export type U32BMutRandom<S> = Pick<
-    MutRandom<S>,
-    "nextU32" | "smartCopy" | "fromUint8Array" | "fromPlain"
->
-
-export function mutRandomFrom<S>(
-    partMutRand: Fract32MutRandom<S> | U32BMutRandom<S>
-): MutRandom<S> {
-    let nextU32: MutRandom<S>["nextU32"]
-    let nextFract32: MutRandom<S>["nextFract32"]
-    if ("nextU32" in partMutRand) {
-        nextU32 = partMutRand.nextU32
-        nextFract32 = function(this: S): fract32 {
-            return asFract32(nextU32.call(this))
-        }
-    } else {
-        nextFract32 = partMutRand.nextFract32
-        nextU32 = function(this: S): u32 {
-            return asU32(nextFract32.call(this))
-        }
+export function mutRandomFrom<S>({
+    nextFract32,
+    fromUint8Array,
+    fromPlain,
+    smartCopy,
+}: Fract32MutRandom<S>): MutRandom<S> {
+    const nextU32 = function(this: S): u32 {
+        return asU32(nextFract32.call(this))
     }
 
     const nextU32Array = function(this: S, n: u32): Uint32Array {
@@ -142,7 +130,6 @@ export function mutRandomFrom<S>(
         return new Uint8Array(u32Array.buffer)
     }
 
-    const { fromUint8Array, fromPlain, smartCopy } = partMutRand
     return {
         fromUint8Array,
         fromPlain,

@@ -76,7 +76,7 @@ function pregenerate(g: MutUheState): void {
 }
 
 export const mutUhe = mutRandomFrom({
-    nextU32(this: MutUheState): u32 {
+    nextFract32(this: MutUheState): u32 {
         const seeds = this.seeds
         let phase = this.phase
         if (phase === seeds.length) {
@@ -86,7 +86,7 @@ export const mutUhe = mutRandomFrom({
             phase = 0
         }
         this.phase = (phase + 1) >>> 0
-        return seeds[phase]
+        return asFract32(seeds[phase])
     },
 
     smartCopy(g: UheState, n: u32): MutUheState {
