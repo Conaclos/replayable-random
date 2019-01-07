@@ -27,6 +27,7 @@
   "module": "dist/module/index.js",
   "es2015": "dist/es2015/index.js",
   "types": "dist/types/index.d.ts",
+  "sideEffects": false,
   "files": [
     "dist",
     "src"
@@ -42,8 +43,7 @@
     "test:data": "rm -rf .generated && tsc && node .generated/script/sample/$PRNG-sample.script.js >| test/_data/$PRNG-sample.json",
     "release:pre": "npm run test && npm run lint && npm run build",
     "release": "npm run release:pre && standard-version --sign --no-verify",
-    "commitmsg": "commitlint  -e  $GIT_PARAMS",
-    "precommit": "npm test && npm run lint"
+    "commitmsg": "commitlint  -e  $GIT_PARAMS"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.2.1",
