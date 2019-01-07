@@ -112,7 +112,10 @@ export interface Random<S> {
      * @return array that contains a number of n unsigned integer (8bits),
      *      and a new generator state
      */
-    readonly u8Array: (this: void, n: u32) => (this: void, g: S) => [Uint8Array, S]
+    readonly u8Array: (
+        this: void,
+        n: u32
+    ) => (this: void, g: S) => [Uint8Array, S]
 
     /**
      * @param n number of generated unsigned integer (32bits)
@@ -120,7 +123,10 @@ export interface Random<S> {
      * @return array that contains a number of n unsigned integer (32bits),
      *      and a new generator state
      */
-    readonly u32Array: (this: void, n: u32) => (this: void, g: S) => [Uint32Array, S]
+    readonly u32Array: (
+        this: void,
+        n: u32
+    ) => (this: void, g: S) => [Uint32Array, S]
 }
 
 /**
@@ -142,7 +148,7 @@ export function randomFrom<S>(mutRand: MutRandom<S>): Random<Readonly<S>> {
         nextFract32,
         nextFract53,
         nextU32Array,
-        nextU8Array
+        nextU8Array,
     } = mutRand
     return {
         fromUint8Array,
