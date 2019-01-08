@@ -27,7 +27,7 @@ export const I32_TOP = (2 ** 31 - 1) | 0
  * @return Is `n' an u32?
  */
 export const isU32 = (n: unknown): n is u32 =>
-    typeof n === "number" && Number.isSafeInteger(n) && 0 <= n && n <= U32_TOP
+    typeof n === "number" && n === n >>> 0
 
 /**
  * @internal
@@ -35,10 +35,7 @@ export const isU32 = (n: unknown): n is u32 =>
  * @return Is `n' an i32?
  */
 export const isI32 = (n: unknown): n is i32 =>
-    typeof n === "number" &&
-    Number.isSafeInteger(n) &&
-    I32_BOTTOM <= n &&
-    n <= I32_TOP
+    typeof n === "number" && n === (n | 0)
 
 const SHIFT_LEFT_32 = 2 ** 32
 
