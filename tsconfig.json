@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "lib": ["es2017"],
-    "importHelpers": true,
+    "lib": ["es2015"],
     "downlevelIteration": true,
     "target": "ES5",
     "sourceMap": true,
-    "stripInternal": true,
     "resolveJsonModule": true,
 
-    "outDir": "./.generated",
+    "outDir": "./.tested",
 
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,

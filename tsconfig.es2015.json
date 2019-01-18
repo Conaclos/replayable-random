@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.module.json",
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "ES6",
 
     "outDir": "./dist/es2015"

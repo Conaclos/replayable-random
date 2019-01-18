@@ -33,17 +33,52 @@
     "src"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.main.json && tsc -p tsconfig.module.json && tsc -p tsconfig.es2015.json && tsc -p tsconfig.types.json",
-    "check": "tsc --noEmit",
-    "format": "prettier --write perf/**/*.ts script/**/*.ts src/**/*.ts test/**/*.ts",
-    "lint": "tslint --project tsconfig.json",
-    "lint:fix": "tslint --project tsconfig.json --fix",
-    "perf": "rm -rf .generated && tsc && node .generated/perf/impl/$PRNG.perf.js",
-    "test": "rm -rf .generated && tsc && ava",
-    "test:data": "rm -rf .generated && tsc && node .generated/script/sample/$PRNG-sample.script.js >| test/_data/$PRNG-sample.json",
-    "release:pre": "npm run test && npm run lint && npm run build",
-    "release": "npm run release:pre && standard-version --sign --no-verify",
-    "commitmsg": "commitlint  -e  $GIT_PARAMS"
+    "prebuild": "npm run clean",
+    "build": "tsc -b tsconfig.main.json tsconfig.module.json tsconfig.es2015.json tsconfig.types.json",
+    "clean": "rm -rf dist/ .tested/ .nyc_output/",
+    "preperf": "rm -rf .tested/perf/ && tsc",
+    "perf": "node .tested/perf/impl/$PRNG.perf.js",
+    "pretest": "rm -rf .tested/test/ && tsc",
+    "test": "nyc ava",
+    "test:data": "tsc && node .tested/script/sample/$PRNG-sample.script.js >| test/_data/$PRNG-sample.json",
+    "release": "standard-version --sign --no-verify"
+  },
+  "ava": {
+    "files": [
+      ".tested/test/**/*.test.js"
+    ],
+    "sources": [
+      ".tested/src/**/*.js"
+    ]
+  },
+  "nyc": {
+    "include": [
+      ".tested/src/"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "ava --fail-fast && lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "standard-version": {
+    "scripts": {
+      "prerelease": "npm run clean && npm test && npm run build",
+      "postchangelog": "$VISUAL CHANGELOG.md"
+    }
   },
   "devDependencies": {
     "@commitlint/cli": "^7.2.1",
@@ -52,20 +87,10 @@
     "ava": "^1.0.0",
     "benchmark": "^2.1.4",
     "husky": "^1.3.1",
+    "lint-staged": "^8.1.0",
+    "nyc": "^13.1.0",
     "prettier": "1.15.3",
     "standard-version": "^4.4.0",
-    "tslint": "^5.12.0",
     "typescript": "^3.2"
-  },
-  "ava": {
-    "files": [
-      ".generated/test/**/*.test.js"
-    ],
-    "sources": [
-      ".generated/src/**/*.js"
-    ]
-  },
-  "dependencies": {
-    "tslib": "^1.9.3"
   }
 }
