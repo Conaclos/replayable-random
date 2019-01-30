@@ -46,11 +46,7 @@ const SHIFT_LEFT_32 = 2 ** 32
  * @param n
  * @return Is `n' a fract32?
  */
-export function isNonNegFract32(n: unknown): n is fract32 {
-    return (
-        typeof n === "number" &&
-        0 <= n &&
-        n < 1 &&
-        n * SHIFT_LEFT_32 - ((n * SHIFT_LEFT_32) >>> 0) === 0
-    )
-}
+export const isNonNegFract32 = (n: unknown): n is fract32 =>
+    typeof n === "number" &&
+    n >>> 0 === 0 && // n in ]-1, 1[
+    n * SHIFT_LEFT_32 === (n * SHIFT_LEFT_32) >>> 0 // positive and 32bits
