@@ -1,31 +1,32 @@
 import { Event, Suite } from "benchmark"
-import { uhe } from "../../src/impl/uhe"
+import { alea, distrib, Rand } from "../../src/"
 
 const suite = new Suite()
 const async = true
 const config = { async }
 
-const stream = uhe.streamFrom("seed")
-const state = uhe.from("seed")
+const stream = alea.mutFrom("seed")
+let state = alea.from("seed")
+let r
 
 // Tests
 suite
     .add(
         "Math.random",
         (): void => {
-            Math.random()
+            r = Math.random()
         }
     )
     .add(
-        "uhe#nextFract32",
+        "alea#mutFract32",
         (): void => {
-            stream.nextFract32()
+            r = distrib.mutFract32(stream)
         }
     )
     .add(
-        "uhe#fract32",
+        "alea#fract32",
         (): void => {
-            uhe.fract32(state)
+            state = distrib.fract32(state)[1]
         }
     )
     // Listeners

@@ -1,8 +1,7 @@
-// Copyright (c) 2018 Victorien Elvinger
-//
+// Copyright (c) 2019 Victorien Elvinger
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-import { u32 } from "../util/number"
+import { U8Array } from "./typed-array"
 
 const nativeEncodeString = (s: string): Uint8Array =>
     new TextEncoder().encode(s)
@@ -12,10 +11,10 @@ const nativeEncodeString = (s: string): Uint8Array =>
  * NOTE: Use TextEncoder#encode if available.
  *
  * @param s string to encode
- * @return Uint8Array containing utf-8 encoded characters of s.
+ * @return array containing utf-8 encoded characters of s.
  */
-export function encodeString(s: string): Uint8Array {
-    const result = new Uint8Array(s.length)
+export const encodeString = (s: string): U8Array => {
+    const result = new U8Array(s.length)
     for (let i = 0; i < s.length; i++) {
         result[i] = s.charCodeAt(i)
     }
@@ -28,15 +27,7 @@ export function encodeString(s: string): Uint8Array {
  * using teh function encodeString.
  *
  * @param s string to encode
- * @return Uint8Array containing utf-8 encoded characters of s.
+ * @return array containing utf-8 encoded characters of s.
  */
-export const stringAsUint8Array: (s: string) => Uint8Array = (() => {
-    if (
-        typeof TextEncoder === "function" &&
-        typeof TextEncoder.prototype.encode === "function"
-    ) {
-        return nativeEncodeString
-    } else {
-        return encodeString
-    }
-})()
+export const stringAsU8Array: (s: string) => U8Array =
+    typeof TextEncoder === "function" ? nativeEncodeString : encodeString

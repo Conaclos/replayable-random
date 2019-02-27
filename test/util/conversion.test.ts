@@ -1,7 +1,6 @@
 import test from "ava"
 import { I32_BOTTOM, I32_TOP, U32_TOP } from "../../src/util/number"
 import {
-    asI32,
     asI32Between,
     asI54,
     asU32,
@@ -19,16 +18,10 @@ test("asU32", (t) => {
     t.is(asU32(FRACT32_TOP), U32_TOP)
 })
 
-test("asI32", (t) => {
-    t.is(asI32(0), 0)
-    t.is(asI32(I32_TOP), I32_TOP)
-    t.is(asI32(U32_MID), I32_BOTTOM)
-})
-
 test("asI54", (t) => {
-    t.is(asI54(0, U32_MID), Number.MIN_SAFE_INTEGER)
+    t.is(asI54(0, FRACT32_MID), Number.MIN_SAFE_INTEGER)
     t.is(asI54(0, 0), 1)
-    t.is(asI54(FRACT32_TOP, I32_TOP), Number.MAX_SAFE_INTEGER)
+    t.is(asI54(FRACT32_TOP, I32_TOP * 2 ** -32), Number.MAX_SAFE_INTEGER)
 })
 
 test("asU32Between", (t) => {

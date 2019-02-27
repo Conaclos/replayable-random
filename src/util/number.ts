@@ -1,5 +1,4 @@
-// Copyright (c) 2018 Victorien Elvinger
-//
+// Copyright (c) 2019 Victorien Elvinger
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 // Number types

@@ -1,9 +1,9 @@
-// Copyright (c) 2018 Victorien Elvinger
-//
+// Copyright (c) 2019 Victorien Elvinger
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 import { f64, u32 } from "./number"
 import { asFract32, asU32 } from "./number-conversion"
+import { U32Array, U8Array } from "./typed-array"
 
 const SPACE_CHAR_CODE = 32
 export const DEFAULT_MASH_INPUT = Uint8Array.of(SPACE_CHAR_CODE)
@@ -34,7 +34,7 @@ export const DEFAULT_MASH_N = 0xefc8_249d
  * @param input
  * @return hash (can also be used as the next internal state)
  */
-export const mash = (n: f64, input: Uint8Array): f64 => {
+export const mash = (n: f64, input: U8Array): f64 => {
     const inputLength = input.length
     for (let i = 0; i < inputLength; i++) {
         n = n + input[i]
@@ -55,10 +55,10 @@ export const mash = (n: f64, input: Uint8Array): f64 => {
  *
  * @param input
  * @param count number of hashes to derive
- * @return Array of unsigned integer 32bits
+ * @return Array of unsigned integer (32bits)
  */
-export const mashes = (input: Uint8Array, count: u32): Uint32Array => {
-    const result = new Uint32Array(count)
+export const mashes = (input: U8Array, count: u32): U32Array => {
+    const result = new U32Array(count)
     let prev = DEFAULT_MASH_N
     for (let i = 0; i < count; i++) {
         prev = mash(prev, DEFAULT_MASH_INPUT)

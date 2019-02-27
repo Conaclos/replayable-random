@@ -1,12 +1,19 @@
-// Copyright (c) 2018 Victorien Elvinger
-//
+// Copyright (c) 2019 Victorien Elvinger
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
-export { Random } from "./core/random"
-export { RandomStream } from "./core/random-stream"
+// core
+export { Rand, MutRand } from "./core/rand"
 
-export { alea, AleaState } from "./impl/alea"
-export { kybos, KybosState } from "./impl/kybos"
-export { uhe, UheState } from "./impl/uhe"
+// generators
+import * as alea from "./generator/alea"
+import * as kybos from "./generator/kybos"
+import * as uhe from "./generator/uhe"
+export { alea, kybos, uhe }
 
-export { f64, fract32, fract53, i32, i54, u32 } from "./util/number"
+// distributions
+import * as distrib from "./distrib"
+export { distrib }
+
+// helpers
+import * as helper from "./helper"
+export { helper }
