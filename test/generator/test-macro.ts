@@ -20,7 +20,10 @@ export function mMutFract32<T>(
     }
 }
 
-export type Sample = { seed: string; values: u32t[] }
+export interface Sample {
+    seed: string
+    values: u32t[]
+}
 
 export const mSample: Macro<[MutRandFrom<string>, Sample]> = (
     t,

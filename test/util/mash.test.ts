@@ -24,8 +24,6 @@ test("mash", (t) => {
 test("mashes", (t) => {
     const input = Uint8Array.of(50, 80, 0)
     const hashes = mashes(input, 10)
-
-    const m = mash(DEFAULT_MASH_N, DEFAULT_MASH_INPUT)
     for (const h of hashes) {
         t.true(isU32(h), "mash seed are u32")
     }
