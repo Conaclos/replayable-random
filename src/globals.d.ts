@@ -1,17 +1,18 @@
+/* eslint-disable no-shadow */
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/console
  */
 interface Console {
-    readonly assert: (test: boolean, message?: string, ...objs: any[]) => void
+    readonly assert: (test: boolean, ...objs: unknown[]) => void
 
-// profiling
+    // profiling
     readonly time: (label?: string) => void
 
     readonly timeEnd: (label?: string) => void
 
-// Debugging
-    readonly log: (message?: string, ...objs: any[]) => void
+    // Debugging
+    readonly log: (...objs: unknown[]) => void
 
     readonly table: (obj: object) => void
 
@@ -19,12 +20,12 @@ interface Console {
 
     readonly count: (label?: string) => number
 
-// Logging
-    readonly info: (message?: string, ...objs: any[]) => void
+    // Logging
+    readonly info: (...objs: unknown[]) => void
 
-    readonly warn: (message?: string, ...objs: any[]) => void
+    readonly warn: (...objs: unknown[]) => void
 
-    readonly error: (message?: string, ...objs: any[]) => void
+    readonly error: (...objs: unknown[]) => void
 
     readonly group: (label?: string) => void
 
@@ -32,12 +33,11 @@ interface Console {
 
     readonly groupEnd: () => void
 
-// Other
+    // Other
     readonly clear: () => void
 }
 
 declare const console: Console
-
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
