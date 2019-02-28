@@ -1,17 +1,13 @@
 import test from "ava"
-import { kybos, distrib } from "../../src/"
+import { kybos } from "../../src/"
 import * as sample from "../_data/kybos-sample.json"
-import { mMutFract32, mSample, mCopyOnWrite } from "./test-macro"
-import { isNonNegFract32 } from "../../src/util/number"
+import { mSample, mCopyOnWrite, mMutFromPlain } from "./generator-macro"
 
-test(
-    "kybos_mut-fract32",
-    mMutFract32,
-    kybos.mutFrom,
-    distrib.mutFract32,
-    isNonNegFract32
-)
+const PRNG_NAME = "kybos"
+const prng = kybos
 
-test("kybos2", mSample, kybos.mutFrom, sample)
+test(`${PRNG_NAME}_sample`, mSample, prng.mutFrom, sample)
 
-test("kybos3", mCopyOnWrite, kybos.from)
+test(`${PRNG_NAME}_copy-on-write`, mCopyOnWrite, prng.from)
+
+test(`${PRNG_NAME}_from-plain`, mMutFromPlain, prng.mutFrom, prng.mutFromPlain)

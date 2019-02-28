@@ -1,17 +1,13 @@
 import test from "ava"
-import { uhe, distrib } from "../../src/"
+import { uhe } from "../../src/"
 import * as sample from "../_data/uhe-sample.json"
-import { mMutFract32, mSample, mCopyOnWrite } from "./test-macro"
-import { isNonNegFract32 } from "../../src/util/number"
+import { mSample, mCopyOnWrite, mMutFromPlain } from "./generator-macro"
 
-test(
-    "uhe_mut-fract32",
-    mMutFract32,
-    uhe.mutFrom,
-    distrib.mutFract32,
-    isNonNegFract32
-)
+const PRNG_NAME = "uhe"
+const prng = uhe
 
-test("uhe2", mSample, uhe.mutFrom, sample)
+test(`${PRNG_NAME}_sample`, mSample, prng.mutFrom, sample)
 
-test("uhe3", mCopyOnWrite, uhe.from)
+test(`${PRNG_NAME}_copy-on-write`, mCopyOnWrite, prng.from)
+
+test(`${PRNG_NAME}_from-plain`, mMutFromPlain, prng.mutFrom, prng.mutFromPlain)

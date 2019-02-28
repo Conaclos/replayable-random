@@ -2,7 +2,9 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 // core
-export { Rand, MutRand } from "./core/rand"
+export { Distrib, MutDistrib } from "./core/distrib"
+export { ForkableMutRand, MutRand, Rand } from "./core/rand"
+export { ForkableMutRandFrom, RandFrom, MutRandFrom } from "./core/rand-from"
 
 // generators
 import * as alea from "./generator/alea"
