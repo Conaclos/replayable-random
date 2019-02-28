@@ -105,11 +105,12 @@ class Kybos implements ForkableMutRand, Rand {
     }
 
     toJSON(): Kybos {
-        // Array.from is an ES6 feature
         let result: Kybos = this
         if ("from" in Array) {
+            // Array.from is an ES6 feature
+            // If it is here, then result.seeds is certainly a typed array
             result = this.fork()
-            result.seeds = Array.from(result.seeds)
+            result.seeds = Array.from(result.seeds) // turn into a regular array
         }
         return result
     }
@@ -174,10 +175,10 @@ const internalFromPlainUsing = (factory: FromPlain<ForkableMutRand>) => (
         const subprng = factory(x.subprng)
         if (subprng !== undefined) {
             let seeds
-            if (F64Array.from !== undefined) {
+            if ("from" in F64Array) {
                 seeds = (F64Array as Float64ArrayConstructor).from(x.seeds)
             } else {
-                seeds = x.seeds.slice()
+                seeds = x.seeds.slice() // ES5 fallback
             }
             return new Kybos(subprng, seeds, x.phase, x.consumable, false)
         }

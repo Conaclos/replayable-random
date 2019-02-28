@@ -109,8 +109,9 @@ class Uhe implements ForkableMutRand, Rand {
         let result: Uhe = this
         if ("from" in Array) {
             // Array.from is an ES6 feature
+            // If it is here, then result.seeds is certainly a typed array
             result = this.fork()
-            result.seeds = Array.from(result.seeds)
+            result.seeds = Array.from(result.seeds) // turn into a regular array
         }
         return result
     }
@@ -143,10 +144,10 @@ function internalFromPlain(x: unknown): Uhe | undefined {
         x.phase <= x.seeds.length
     ) {
         let seeds
-        if (U32Array.from !== undefined) {
+        if ("from" in U32Array) {
             seeds = (U32Array as Uint32ArrayConstructor).from(x.seeds)
         } else {
-            seeds = x.seeds.slice()
+            seeds = x.seeds.slice() // ES5 fallback
         }
         return new Uhe(x.carry, seeds, x.phase, false)
     }
