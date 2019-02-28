@@ -15,7 +15,7 @@
     "seed"
   ],
   "author": "Victorien Elvinger (victorien.elvinger.fr)",
-  "license": "zlib",
+  "license": "Zlib",
   "repository": {
     "type": "git",
     "url": "https://github.com/Conaclos/replayable-random"
