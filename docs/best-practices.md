@@ -27,4 +27,8 @@ for (let i = 0; i < 1000; i++) {
 
 The inputs `0` and `5` are valided only once.
 
+## Batch random generations
+
+Coming soon...
+
 [currying]: https://en.wikipedia.org/wiki/Currying

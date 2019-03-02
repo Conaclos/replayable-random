@@ -17,7 +17,7 @@ It uses a [copy-on-write][cow] startegy to achieve better performances.
 ### Pay only for what you use
 
 Replayable Random is designed to take advantage of modern dead code elimination techniques, especially [tree shaking][tree-shaking].
-Using bundlers as that [rollup][rollup], your bundles can contain only the functions which are actually used.
+Using bundlers such as [rollup][rollup], your bundles can contain only the functions which are actually used.
 Future versions of Replayable Random can integrate new functions without affecting the size of your bundles.
 
 ### Easily extensible
@@ -80,7 +80,7 @@ n = distrib.mutI32Between(-4)(5)(Math)
 
 -   [Available PRNGs](docs/generator.md)
 -   [Available distributions](docs/distrib.md)
--   Best practices (coming soon)
+-   [Best practices](docs/best-practices.md)
 -   Write your own PRNG (coming soon)
 -   Write your own distribution (coming soon)
 
