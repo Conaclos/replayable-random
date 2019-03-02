@@ -82,8 +82,7 @@
   },
   "standard-version": {
     "scripts": {
-      "prerelease": "npm run clean && npm test && npm run build",
-      "postchangelog": "$VISUAL CHANGELOG.md"
+      "prerelease": "npm run clean && npm test && npm run build"
     }
   },
   "devDependencies": {
