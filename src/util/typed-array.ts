@@ -26,3 +26,17 @@ export const F32Array: Float32ArrayConstructor | ArrayConstructor =
     Float32Array || Array
 export const F64Array: Float64ArrayConstructor | ArrayConstructor =
     Float64Array || Array
+
+/**
+ * ES5 fallback of `Array.from`
+ */
+export const arrayFromFallback = <T>(a: ArrayLike<T>): T[] => {
+    const len = a.length
+    const result = new Array(len)
+    for (let i = 0; i < len; i++) {
+        result[i] = a[i]
+    }
+    return result
+}
+
+export const arrayFrom = Array.from || arrayFromFallback

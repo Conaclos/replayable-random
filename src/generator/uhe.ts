@@ -8,7 +8,7 @@ import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { f64, i32, isI32, isU32, u32 } from "../util/number"
 import { asFract32, asU32 } from "../util/number-conversion"
-import { U32Array, U8Array } from "../util/typed-array"
+import { U32Array, U8Array, arrayFrom } from "../util/typed-array"
 import { stringAsU8Array } from "../util/string-encoding"
 import { assert } from "../util/assert"
 
@@ -107,13 +107,8 @@ class Uhe implements ForkableMutRand, Rand {
     }
 
     toJSON(): Uhe {
-        let result: Uhe = this
-        if ("from" in Array) {
-            // Array.from is an ES6 feature
-            // If it is here, then result.seeds is certainly a typed array
-            result = this.fork()
-            result.seeds = Array.from(result.seeds) // turn into a regular array
-        }
+        const result = this.fork()
+        result.seeds = arrayFrom(result.seeds) // turn into a regular array
         return result
     }
 }

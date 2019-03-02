@@ -8,7 +8,7 @@ import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { fract32, isNonNegFract32, isU32, u32 } from "../util/number"
 import { asFract32, asU32Between } from "../util/number-conversion"
-import { F64Array, U8Array } from "../util/typed-array"
+import { F64Array, U8Array, arrayFrom } from "../util/typed-array"
 import { add, has, U4_EMPTY_U4SET } from "../util/u4-set"
 import * as alea from "./alea"
 import { stringAsU8Array } from "../util/string-encoding"
@@ -106,13 +106,8 @@ class Kybos implements ForkableMutRand, Rand {
     }
 
     toJSON(): Kybos {
-        let result: Kybos = this
-        if ("from" in Array) {
-            // Array.from is an ES6 feature
-            // If it is here, then result.seeds is certainly a typed array
-            result = this.fork()
-            result.seeds = Array.from(result.seeds) // turn into a regular array
-        }
+        const result = this.fork()
+        result.seeds = arrayFrom(result.seeds) // turn into a regular array
         return result
     }
 }
