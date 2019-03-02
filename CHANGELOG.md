@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/Conaclos/replayable-random/compare/v0.2.0...v0.3.0) (2019-03-02)
+
+
+### Code Refactoring
+
+* make tree-shaking friendly the library ([14b34fe](https://github.com/Conaclos/replayable-random/commit/14b34fe))
+
+
+### Features
+
+* check arguments for robustness ([6ed5ede](https://github.com/Conaclos/replayable-random/commit/6ed5ede))
+
+
+### BREAKING CHANGES
+
+* All distributions are now standalone curried functions that
+take a generator state as last input.
+Every geneartor state provides methods to mutate or to generate a
+generator state.
+Distributions use dynamic dispatch on the genartor state in order
+to be generic.
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/Conaclos/replayable-random/compare/v0.1.0...v0.2.0) (2019-01-07)
 
