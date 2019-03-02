@@ -32,6 +32,9 @@
     "dist",
     "src"
   ],
+  "engines": {
+    "node": ">=6"
+  },
   "scripts": {
     "prebuild": "npm run clean",
     "build": "tsc -b tsconfig.main.json tsconfig.module.json tsconfig.es2015.json tsconfig.types.json",
