@@ -4,12 +4,13 @@
 import { MutDistrib } from "../core/distrib"
 import { ForkableMutRand, Rand } from "../core/rand"
 import { ForkableMutRandFrom, RandFrom, MutRandFrom } from "../core/rand-from"
-import { isObject, FromPlain } from "../util/data-validation"
+import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { f64, fract32, i32, isNonNegFract32, isU32 } from "../util/number"
 import { asFract32 } from "../util/number-conversion"
 import { stringAsU8Array } from "../util/string-encoding"
 import { U8Array } from "../util/typed-array"
+import { assert } from "../util/assert"
 
 /**
  * Alea: Johannes Baagøe's PRNG designed for high-efficiency in JavaScript.
@@ -81,27 +82,30 @@ function internalFromBytes(seed: U8Array): Alea {
 }
 
 /**
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return an immutable generator state derived from `seed`
  */
 export const fromBytes: RandFrom<U8Array> = internalFromBytes
 
 /**
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return a mutable generator state derived from `seed`
  */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
-const internalFrom = (seed: string) => internalFromBytes(stringAsU8Array(seed))
+const internalFrom = (seed: string) => {
+    assert(isPrintableASCII(seed), "seed must be a printable ASCII string")
+    return internalFromBytes(stringAsU8Array(seed))
+}
 
 /**
- * @param seed non-empty printable ASCII string
+ * @param seed printable ASCII string
  * @return an immutable generator state derived from `seed`
  */
 export const from: RandFrom<string> = internalFrom
 
 /**
- * @param seed non-empty printable ASCII string
+ * @param seed printable ASCII string
  * @return a mutable generator state derived from `seed`
  */
 export const mutFrom: MutRandFrom<string> = internalFrom

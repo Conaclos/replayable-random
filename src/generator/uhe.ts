@@ -4,12 +4,13 @@
 import { MutDistrib } from "../core/distrib"
 import { ForkableMutRand, Rand } from "../core/rand"
 import { ForkableMutRandFrom, RandFrom, MutRandFrom } from "../core/rand-from"
-import { isObject, FromPlain } from "../util/data-validation"
+import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { f64, i32, isI32, isU32, u32 } from "../util/number"
 import { asFract32, asU32 } from "../util/number-conversion"
 import { U32Array, U8Array } from "../util/typed-array"
 import { stringAsU8Array } from "../util/string-encoding"
+import { assert } from "../util/assert"
 
 /**
  * Ultra-High-Entropy (UHE) PRNG proposed by Gibson Research Corporation.
@@ -134,7 +135,10 @@ export const fromBytes: RandFrom<U8Array> = internalFromBytes
  */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
-const internalFrom = (seed: string) => internalFromBytes(stringAsU8Array(seed))
+const internalFrom = (seed: string) => {
+    assert(isPrintableASCII(seed), "seed must be a printable ASCII string")
+    return internalFromBytes(stringAsU8Array(seed))
+}
 
 /**
  * @param seed non-empty printable ASCII string

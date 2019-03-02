@@ -13,6 +13,15 @@ export interface Sample {
     values: u32t[]
 }
 
+export const mFail: Macro<[MutRandFrom<string>, Sample]> = (
+    t,
+    mutFrom,
+    s
+): void => {
+    t.throws(() => mutFrom("☺"))
+    t.throws(() => mutFrom("ascii-then-☺"))
+}
+
 export const mSample: Macro<[MutRandFrom<string>, Sample]> = (
     t,
     mutFrom,

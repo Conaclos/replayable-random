@@ -4,7 +4,7 @@
 import { MutDistrib } from "../core/distrib"
 import { ForkableMutRand, Rand } from "../core/rand"
 import { ForkableMutRandFrom, RandFrom, MutRandFrom } from "../core/rand-from"
-import { isObject, FromPlain } from "../util/data-validation"
+import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { fract32, isNonNegFract32, isU32, u32 } from "../util/number"
 import { asFract32, asU32Between } from "../util/number-conversion"
@@ -12,6 +12,7 @@ import { F64Array, U8Array } from "../util/typed-array"
 import { add, has, U4_EMPTY_U4SET } from "../util/u4-set"
 import * as alea from "./alea"
 import { stringAsU8Array } from "../util/string-encoding"
+import { assert } from "../util/assert"
 
 /**
  * Kybos: Johannes Baagøe's PRNG that combines
@@ -131,7 +132,7 @@ const internalFromBytesUsing = (factory: ForkableMutRandFrom<U8Array>) => (
 /**
  * @curried
  * @param factory sub random generator to use
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return an immutable generator state derived from `seed`
  */
 export const fromBytesUsing: (
@@ -141,7 +142,7 @@ export const fromBytesUsing: (
 /**
  * @curried
  * @param factory sub random generator to use
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return a mutable generator state derived from `seed`
  */
 export const mutFromBytesUsing: (
@@ -151,25 +152,28 @@ export const mutFromBytesUsing: (
 const internalFromBytes = internalFromBytesUsing(alea.mutFromBytes)
 
 /**
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return an immutable generator state derived from `seed`
  */
 export const fromBytes: RandFrom<U8Array> = internalFromBytes
 
 /**
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return a mutable generator state derived from `seed`
  */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
 const internalFromUsing = (factory: ForkableMutRandFrom<U8Array>) => (
     seed: string
-): Kybos => internalFromBytesUsing(factory)(stringAsU8Array(seed))
+): Kybos => {
+    assert(isPrintableASCII(seed), "seed must be a printable ASCII string")
+    return internalFromBytesUsing(factory)(stringAsU8Array(seed))
+}
 
 /**
  * @curried
  * @param factory sub random generator to use
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return an immutable generator state derived from `seed`
  */
 export const fromUsing: (
@@ -179,7 +183,7 @@ export const fromUsing: (
 /**
  * @curried
  * @param factory sub random generator to use
- * @param seed non-empty array of bytes
+ * @param seed array of bytes
  * @return a mutable generator state derived from `seed`
  */
 export const mutFromUsing: (
@@ -189,13 +193,13 @@ export const mutFromUsing: (
 const internalFrom = internalFromUsing(alea.mutFromBytes)
 
 /**
- * @param seed non-empty printable ASCII string
+ * @param seed printable ASCII string
  * @return an immutable generator state derived from `seed`
  */
 export const from: RandFrom<string> = internalFrom
 
 /**
- * @param seed non-empty printable ASCII string
+ * @param seed printable ASCII string
  * @return a mutable generator state derived from `seed`
  */
 export const mutFrom: MutRandFrom<string> = internalFrom

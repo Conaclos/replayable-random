@@ -2,10 +2,11 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 import { MutDistrib, Distrib } from "../core/distrib"
-import { u32 as u32t } from "../util/number"
+import { u32 as u32t, isU32 } from "../util/number"
 import { asU32, asU32Between } from "../util/number-conversion"
 import { pureFrom, pipe } from "../helper/base"
 import { fill, ArrayDistrib } from "../helper/array-helper"
+import { assert } from "../util/assert"
 
 /**
  * @param mutG [mutated] generator state
@@ -26,9 +27,14 @@ export const u32: Distrib<u32t> = (g) => g.derive(mutU32)
  * @return an imperative distribution that generates a random
  *  unsigned integer (32bits) in interval [l, exclusiveU[
  */
-export const mutU32Between = (l: u32t) => (
-    excludedU: u32t
-): MutDistrib<u32t> => (mutG) => asU32Between(l, excludedU, mutG.random())
+export const mutU32Between = (l: u32t) => {
+    assert(isU32(l), "l must be a u32")
+    return (excludedU: u32t): MutDistrib<u32t> => {
+        assert(isU32(excludedU), "excludedU must be a u32")
+        assert(l < excludedU, "l must be lower than excludedU")
+        return (mutG) => asU32Between(l, excludedU, mutG.random())
+    }
+}
 
 /**
  * @curried

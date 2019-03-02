@@ -1,10 +1,12 @@
 import test from "ava"
 import { uhe } from "../../src/"
 import * as sample from "../_data/uhe-sample.json"
-import { mSample, mCopyOnWrite, mMutFromPlain } from "./generator-macro"
+import { mSample, mCopyOnWrite, mMutFromPlain, mFail } from "./generator-macro"
 
 const PRNG_NAME = "uhe"
 const prng = uhe
+
+test(`${PRNG_NAME}_fail`, mFail, prng.mutFrom, sample)
 
 test(`${PRNG_NAME}_sample`, mSample, prng.mutFrom, sample)
 

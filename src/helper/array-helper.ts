@@ -2,8 +2,9 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 import { MutDistrib, Distrib } from "../core/distrib"
-import { u32 } from "../util/number"
+import { u32, isU32 } from "../util/number"
 import { pureFrom, pipe } from "./base"
+import { assert } from "../util/assert"
 
 /**
  * Mutable version of ArrayLike<T>
@@ -45,12 +46,15 @@ export interface ArrayMutDistrib<E> {
  */
 export const mutFill = <E>(d: MutDistrib<E>): ArrayMutDistrib<E> => (
     factory
-) => (n) => (mutG) => {
-    const result = new factory(n)
-    for (let i = 0; i < result.length; i++) {
-        result[i] = d(mutG)
+) => (n) => {
+    assert(isU32(n), "n must be a u32")
+    return (mutG) => {
+        const result = new factory(n)
+        for (let i = 0; i < result.length; i++) {
+            result[i] = d(mutG)
+        }
+        return result
     }
-    return result
 }
 
 export interface ArrayDistrib<E> {
