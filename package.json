@@ -72,9 +72,11 @@
     }
   },
   "lint-staged": {
-    "*.ts": [
+    "*.{json,ts,md,yml}": [
       "prettier --write",
-      "git add",
+      "git add"
+    ],
+    "*.ts": [
       "eslint"
     ]
   },
