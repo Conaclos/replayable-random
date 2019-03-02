@@ -6,7 +6,7 @@ import { MutRand, Rand, ForkableMutRand } from "./rand"
 export interface MutRandFrom<T> {
     /**
      * @param seed
-     * @return mutable genartor state derived from seed.
+     * @return a mutable genartor state derived from `seed`
      */
     (seed: T): MutRand
 }
@@ -14,7 +14,7 @@ export interface MutRandFrom<T> {
 export interface RandFrom<T> {
     /**
      * @param seed
-     * @return immutable generator state derived from seed.
+     * @return an immutable generator state derived from `seed`
      */
     (seed: T): Rand
 }
@@ -22,7 +22,7 @@ export interface RandFrom<T> {
 export interface ForkableMutRandFrom<T> {
     /**
      * @param seed
-     * @return forkable genartor state derived from seed.
+     * @return a forkable genartor state derived from `seed`
      */
     (seed: T): ForkableMutRand
 }

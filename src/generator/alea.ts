@@ -80,14 +80,30 @@ function internalFromBytes(seed: U8Array): Alea {
     return new Alea(INITIAL_CARRY, seed0, seed1, seed2)
 }
 
+/**
+ * @param seed non-empty array of bytes
+ * @return an immutable generator state derived from `seed`
+ */
 export const fromBytes: RandFrom<U8Array> = internalFromBytes
 
+/**
+ * @param seed non-empty array of bytes
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
 const internalFrom = (seed: string) => internalFromBytes(stringAsU8Array(seed))
 
+/**
+ * @param seed non-empty printable ASCII string
+ * @return an immutable generator state derived from `seed`
+ */
 export const from: RandFrom<string> = internalFrom
 
+/**
+ * @param seed non-empty printable ASCII string
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFrom: MutRandFrom<string> = internalFrom
 
 function internalFromPlain(x: unknown): Alea | undefined {
@@ -105,6 +121,20 @@ function internalFromPlain(x: unknown): Alea | undefined {
     return undefined
 }
 
+/**
+ * @experimental
+ *
+ * @param x candidate
+ * @return an immutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const fromPlain: FromPlain<Rand> = internalFromPlain
 
+/**
+ * @experimental
+ *
+ * @param x candidate
+ * @return a mutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const mutFromPlain: FromPlain<ForkableMutRand> = internalFromPlain

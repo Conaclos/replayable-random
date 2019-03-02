@@ -12,13 +12,13 @@ export type fract53 = f64
 
 // Extrenums
 /** @internal */
-export const U32_TOP = (2 ** 32 - 1) >>> 0
+export const U32_TOP = 0xffff_ffff >>> 0
 
 /** @internal */
-export const I32_BOTTOM = -(2 ** 31) | 0
+export const I32_BOTTOM = -0x8000_0000 | 0
 
 /** @internal */
-export const I32_TOP = (2 ** 31 - 1) | 0
+export const I32_TOP = 0x7fff_ffff | 0
 
 /**
  * @internal
@@ -39,9 +39,10 @@ export const isI32 = (n: unknown): n is i32 =>
 const SHIFT_LEFT_32 = 2 ** 32
 
 /**
- * WARNING: due to float arithmetic imprecision,
- *      it is possible to flag some non-fract32 as fract32.
  * @internal
+ * @note due to float arithmetic imprecision,
+ *  it is possible to flag some non-fract32 as fract32.
+ *
  * @param n
  * @return Is `n' a fract32?
  */

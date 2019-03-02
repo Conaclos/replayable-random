@@ -42,6 +42,7 @@ export interface Rand {
  */
 export interface ForkableMutRand extends MutRand {
     /**
+     * @unsafe
      * @note this method is intended for internal use.
      *  Be sure to understand its semantic before to use it.
      *
@@ -62,7 +63,7 @@ export interface ForkableMutRand extends MutRand {
      * fork.random() // safe
      * ```
      *
-     * @return a copy-on-write version of the current generator state.
+     * @return a copy-on-write version of the current generator state
      */
     fork: () => ForkableMutRand
 }

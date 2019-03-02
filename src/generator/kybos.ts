@@ -9,7 +9,7 @@ import { mashes } from "../util/mash"
 import { fract32, isNonNegFract32, isU32, u32 } from "../util/number"
 import { asFract32, asU32Between } from "../util/number-conversion"
 import { F64Array, U8Array } from "../util/typed-array"
-import { add, has, U4_EMPTY_SET } from "../util/u4-set"
+import { add, has, U4_EMPTY_U4SET } from "../util/u4-set"
 import * as alea from "./alea"
 import { stringAsU8Array } from "../util/string-encoding"
 
@@ -35,14 +35,14 @@ const ORDER = 8
 /**
  * Compute the maxium number of random numbers
  * without erasing those freshly generated.
- * @param g [Mutated] random generator
+ * @param mutG [Mutated] random generator
  */
-function pregenerate(g: Kybos): void {
-    const { seeds, subprng } = g
+function pregenerate(mutG: Kybos): void {
+    const { seeds, subprng } = mutG
     const length = seeds.length
 
-    let phase = g.phase
-    let bitset = U4_EMPTY_SET //add(U4_EMPTY_SET, phase)
+    let phase = mutG.phase
+    let bitset = U4_EMPTY_U4SET //add(U4_EMPTY_SET, phase)
     let consumable = 0
     do {
         let seed = seeds[phase] - subprng.random()
@@ -55,7 +55,7 @@ function pregenerate(g: Kybos): void {
         phase = asU32Between(0, length, seeds[phase])
         consumable++
     } while (!has(bitset, phase))
-    g.consumable = consumable
+    mutG.consumable = consumable
 }
 
 class Kybos implements ForkableMutRand, Rand {
@@ -128,36 +128,76 @@ const internalFromBytesUsing = (factory: ForkableMutRandFrom<U8Array>) => (
     return new Kybos(subprng, seeds, 0, 0, false)
 }
 
+/**
+ * @curried
+ * @param factory sub random generator to use
+ * @param seed non-empty array of bytes
+ * @return an immutable generator state derived from `seed`
+ */
 export const fromBytesUsing: (
     factory: ForkableMutRandFrom<U8Array>
 ) => RandFrom<U8Array> = internalFromBytesUsing
 
+/**
+ * @curried
+ * @param factory sub random generator to use
+ * @param seed non-empty array of bytes
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFromBytesUsing: (
     factory: ForkableMutRandFrom<U8Array>
 ) => ForkableMutRandFrom<U8Array> = internalFromBytesUsing
 
 const internalFromBytes = internalFromBytesUsing(alea.mutFromBytes)
 
+/**
+ * @param seed non-empty array of bytes
+ * @return an immutable generator state derived from `seed`
+ */
 export const fromBytes: RandFrom<U8Array> = internalFromBytes
 
+/**
+ * @param seed non-empty array of bytes
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
 const internalFromUsing = (factory: ForkableMutRandFrom<U8Array>) => (
     seed: string
 ): Kybos => internalFromBytesUsing(factory)(stringAsU8Array(seed))
 
+/**
+ * @curried
+ * @param factory sub random generator to use
+ * @param seed non-empty array of bytes
+ * @return an immutable generator state derived from `seed`
+ */
 export const fromUsing: (
     factory: ForkableMutRandFrom<U8Array>
 ) => RandFrom<string> = internalFromUsing
 
+/**
+ * @curried
+ * @param factory sub random generator to use
+ * @param seed non-empty array of bytes
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFromUsing: (
     factory: ForkableMutRandFrom<U8Array>
 ) => ForkableMutRandFrom<string> = internalFromUsing
 
 const internalFrom = internalFromUsing(alea.mutFromBytes)
 
+/**
+ * @param seed non-empty printable ASCII string
+ * @return an immutable generator state derived from `seed`
+ */
 export const from: RandFrom<string> = internalFrom
 
+/**
+ * @param seed non-empty printable ASCII string
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFrom: MutRandFrom<string> = internalFrom
 
 const internalFromPlainUsing = (factory: FromPlain<ForkableMutRand>) => (
@@ -186,16 +226,44 @@ const internalFromPlainUsing = (factory: FromPlain<ForkableMutRand>) => (
     return undefined
 }
 
+/**
+ * @curried
+ * @param factory sub random generator to use
+ * @param x candidate
+ * @return an immutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const fromPlainUsing: (
     factory: FromPlain<ForkableMutRand>
 ) => FromPlain<Rand> = internalFromPlainUsing
 
+/**
+ * @curried
+ * @param factory sub random generator to use
+ * @param x candidate
+ * @return a mutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const mutFromPlainUsing: (
     factory: FromPlain<ForkableMutRand>
 ) => FromPlain<ForkableMutRand> = internalFromPlainUsing
 
 const internalFromPlain = internalFromPlainUsing(alea.mutFromPlain)
 
+/**
+ * @experimental
+ *
+ * @param x candidate
+ * @return an immutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const fromPlain: FromPlain<Rand> = internalFromPlain
 
+/**
+ * @experimental
+ *
+ * @param x candidate
+ * @return a mutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const mutFromPlain: FromPlain<ForkableMutRand> = internalFromPlain

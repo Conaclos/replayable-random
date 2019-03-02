@@ -8,10 +8,10 @@ import { pureFrom, pipe } from "../helper/base"
 import { fill, ArrayDistrib } from "../helper/array-helper"
 
 /**
- * @param g [mutated] generator state
+ * @param mutG [mutated] generator state
  * @return a random unsigned integer (32bits)
  */
-export const mutU32: MutDistrib<u32t> = (g) => asU32(g.random())
+export const mutU32: MutDistrib<u32t> = (mutG) => asU32(mutG.random())
 
 /**
  * @param g generator state
@@ -20,42 +20,37 @@ export const mutU32: MutDistrib<u32t> = (g) => asU32(g.random())
 export const u32: Distrib<u32t> = (g) => g.derive(mutU32)
 
 /**
- * @note the returned function cannot produce the maximum unsigned integer.
- * Use {@link mutU32 } to generate any unsigned integer (32bits).
- *
+ * @curried
  * @param l lower bound (inclusive)
  * @param excludedU upper bound (excluded)
- * @return a function that accepts and mutates a random generator, and
- *  returns a random unsigned integer (32bits) in interval [l, exclusiveU[
+ * @return an imperative distribution that generates a random
+ *  unsigned integer (32bits) in interval [l, exclusiveU[
  */
 export const mutU32Between = (l: u32t) => (
     excludedU: u32t
-): MutDistrib<u32t> => (g) => asU32Between(l, excludedU, g.random())
+): MutDistrib<u32t> => (mutG) => asU32Between(l, excludedU, mutG.random())
 
 /**
+ * @curried
  * @param l lower bound (inclusive)
  * @param excludedU upper bound (excluded)
- * @return function that accepts a generator state and returns
- *      a random unsigned integer (32bits) in interval [l, excludedU[ with
- *      the next generator state
+ * @return a pure distribution that generates a
+ *  random unsigned integer (32bits) in interval [l, exclusiveU[
  */
 export const u32Between: (l: u32t) => (excludedU: u32t) => Distrib<u32t> = (
     l
 ) => pipe(mutU32Between(l))(pureFrom)
 
 /**
- * @note
- *  If you use Array as factory you should explicitly set the generic
- *  with the expected array type:
- *  u32Fill<Array<number>>(Array)
- *
  * @example
  *  u32Fill(Uint32Array)(50)(g)
  *  u32Fill<Array<number>>(Array)(50)(g)
  *
+ * @curried
  * @param factory array factory (should be Array or Uint32Array)
- * @return a function that accepts the length of the array to insatntiate, and
- *  returns a pure distribution that returns the instantiated array fullfilled
- *  with random unsigned integers (32bits)
+ * @param n length of the array to generate
+ * @return a pure distribution that geneartes an array.
+ *  The array is instantiated with `factory` and contains `n`
+ *  random unsigned integer (32bits)
  */
 export const u32Fill: ArrayDistrib<u32t> = (factory) => fill(mutU32)(factory)

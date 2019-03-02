@@ -6,11 +6,11 @@ import { asFract53 } from "../util/number-conversion"
 import { fract53 as fract53t } from "../util/number"
 
 /**
- * @param g [mutated] generator state
+ * @param mutG [mutated] generator state
  * @return a random float (64bits) in interval [0, 1[ using 53 significant bits
  */
-export const mutFract53: MutDistrib<fract53t> = (g) =>
-    asFract53(g.random(), g.random())
+export const mutFract53: MutDistrib<fract53t> = (mutG) =>
+    asFract53(mutG.random(), mutG.random())
 
 /**
  * @param g generator state

@@ -9,63 +9,72 @@ import { pureFrom, pipe } from "./base"
  * Mutable version of ArrayLike<T>
  */
 export interface MutArrayLike<T> {
+    /**
+     * Number of elements
+     */
     readonly length: u32
+
+    /**
+     * `i`-th element
+     */
     [i: number]: T
 }
 
-/**
- * Function that accepts a factory of array, and returns a
- * function that accepts the number of element to generate, and returns an
- * imperative distribution.
- *
- * The factory should be Array or a typed array constructor if the type of
- * generated element fits.
- */
 export interface ArrayMutDistrib<E> {
-    <U extends MutArrayLike<E>>(
-        factory: {
-            new (n: u32): U
-        }
-    ): (n: u32) => MutDistrib<U>
+    /**
+     * @curried
+     * @param factory array factory (should be able to store items of type <E>)
+     * @param n length of the array to generate
+     * @return imperative distribution that geneartes an array.
+     *  The array is instantiated with `factory` and contains `n`
+     *  random items of type <E>
+     */
+    <U extends MutArrayLike<E>>(factory: { new (n: u32): U }): (
+        n: u32
+    ) => MutDistrib<U>
 }
 
 /**
- * @param d impure distribution to generate element of type E
- * @return function that accepts the number of element to generate, and returns
- *  a function that accepts a random generator, and returns
- *  a random element of type E
+ * @curried
+ * @param d impure distribution to generate elements of type <E>
+ * @param factory array factory (should be able to store items of type <E>)
+ * @param n length of the array to generate
+ * @return an imperative distribution that geneartes an array.
+ *  The array is instantiated with `factory` and contains `n`
+ *  random items of type <E>
  */
 export const mutFill = <E>(d: MutDistrib<E>): ArrayMutDistrib<E> => (
     factory
-) => (n) => (g) => {
+) => (n) => (mutG) => {
     const result = new factory(n)
     for (let i = 0; i < result.length; i++) {
-        result[i] = d(g)
+        result[i] = d(mutG)
     }
     return result
 }
 
-/**
- * Function that accepts a factory of array, and returns a
- * function that accepts the number of element to generate, and returns an
- * pure distribution.
- *
- * The factory should be Array or a typed array constructor if the type of
- * generated element fits.
- */
 export interface ArrayDistrib<E> {
-    <U extends MutArrayLike<E>>(
-        factory: {
-            new (n: u32): U
-        }
-    ): (n: u32) => Distrib<U>
+    /**
+     * @curried
+     * @param factory array factory (should be able to store items of type <E>)
+     * @param n length of the array to generate
+     * @return a pure distribution that geneartes an array.
+     *  The array is instantiated with `factory` and contains `n`
+     *  random items of type <E>
+     */
+    <U extends MutArrayLike<E>>(factory: { new (n: u32): U }): (
+        n: u32
+    ) => Distrib<U>
 }
 
 /**
- * @param d impure distribution to generate element of type E
- * @return function that accepts the number of element to generate, and returns
- *  a function that accepts a random generator, and returns
- *  a random element of type E and next generator state
+ * @curried
+ * @param d impure distribution to generate elements of type E
+ * @param factory array factory (should be able to store items of type <E>)
+ * @param n length of the array to generate
+ * @return a pure distribution that geneartes an array.
+ *  The array is instantiated with `factory` and contains `n`
+ *  random items of type <E>
  */
 export const fill = <E>(d: MutDistrib<E>): ArrayDistrib<E> => (factory) =>
     pipe(mutFill(d)(factory))(pureFrom)

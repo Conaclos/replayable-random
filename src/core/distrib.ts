@@ -8,10 +8,10 @@ import { MutRand, Rand } from "./rand"
  */
 export interface MutDistrib<T> {
     /**
-     * @param g [mutated] generator state
+     * @param mutG [mutated] generator state
      * @return a random element of type T
      */
-    (g: MutRand): T
+    (mutG: MutRand): T
 }
 
 /**

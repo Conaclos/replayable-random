@@ -53,18 +53,18 @@ const ORDER = 48
 /**
  * Compute the maxium number of random numbers that a state can hold.
  * Here, the maximum number is equal to ORDER.
- * @param g generator's state [Mutated]
+ * @param mutG generator's state [Mutated]
  */
-function pregenerate(g: Uhe): void {
-    const { seeds } = g
+function pregenerate(mutG: Uhe): void {
+    const { seeds } = mutG
     const length = seeds.length
-    let carry = g.carry
+    let carry = mutG.carry
     for (let i = 0; i < length; i++) {
         const t: f64 = MULTIPLIER * asFract32(seeds[i]) + asFract32(carry)
         carry = t | 0
         seeds[i] = asU32(t - carry) // new computed seed
     }
-    g.carry = carry
+    mutG.carry = carry
 }
 
 class Uhe implements ForkableMutRand, Rand {
@@ -122,14 +122,30 @@ function internalFromBytes(seed: U8Array): Uhe {
     return new Uhe(INITIAL_CARRY, seeds, seeds.length, false)
 }
 
+/**
+ * @param seed non-empty array of bytes
+ * @return immutable generator state derived from `seed`
+ */
 export const fromBytes: RandFrom<U8Array> = internalFromBytes
 
+/**
+ * @param seed non-empty array of bytes
+ * @return mutable generator state derived from `seed`
+ */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
 const internalFrom = (seed: string) => internalFromBytes(stringAsU8Array(seed))
 
+/**
+ * @param seed non-empty printable ASCII string
+ * @return an immutable generator state derived from `seed`
+ */
 export const from: RandFrom<string> = internalFrom
 
+/**
+ * @param seed non-empty printable ASCII string
+ * @return a mutable generator state derived from `seed`
+ */
 export const mutFrom: MutRandFrom<string> = internalFrom
 
 function internalFromPlain(x: unknown): Uhe | undefined {
@@ -154,6 +170,20 @@ function internalFromPlain(x: unknown): Uhe | undefined {
     return undefined
 }
 
+/**
+ * @experimental
+ *
+ * @param x candidate
+ * @return an immutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const fromPlain: FromPlain<Rand> = internalFromPlain
 
+/**
+ * @experimental
+ *
+ * @param x candidate
+ * @return a mutable generator state from `x`,
+ *  or undefined if `x` is mal-formed.
+ */
 export const mutFromPlain: FromPlain<ForkableMutRand> = internalFromPlain
