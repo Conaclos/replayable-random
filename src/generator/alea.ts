@@ -3,7 +3,7 @@
 
 import { MutDistrib } from "../core/distrib"
 import { ForkableMutRand, Rand } from "../core/rand"
-import { ForkableMutRandFrom, RandFrom, MutRandFrom } from "../core/rand-from"
+import { ForkableMutRandFrom, RandFrom } from "../core/rand-from"
 import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { f64, fract32, i32, isNonNegFract32, isU32 } from "../util/number"
@@ -93,7 +93,7 @@ export const fromBytes: RandFrom<U8Array> = internalFromBytes
  */
 export const mutFromBytes: ForkableMutRandFrom<U8Array> = internalFromBytes
 
-const internalFrom = (seed: string) => {
+const internalFrom = (seed: string): Alea => {
     assert(isPrintableASCII(seed), "seed must be a printable ASCII string")
     return internalFromBytes(stringAsU8Array(seed))
 }
@@ -108,7 +108,7 @@ export const from: RandFrom<string> = internalFrom
  * @param seed printable ASCII string
  * @return a mutable generator state derived from `seed`
  */
-export const mutFrom: MutRandFrom<string> = internalFrom
+export const mutFrom: ForkableMutRandFrom<string> = internalFrom
 
 function internalFromPlain(x: unknown): Alea | undefined {
     if (

@@ -3,7 +3,7 @@
 
 import { MutDistrib } from "../core/distrib"
 import { ForkableMutRand, Rand } from "../core/rand"
-import { ForkableMutRandFrom, RandFrom, MutRandFrom } from "../core/rand-from"
+import { ForkableMutRandFrom, RandFrom } from "../core/rand-from"
 import { isObject, FromPlain, isPrintableASCII } from "../util/data-validation"
 import { mashes } from "../util/mash"
 import { fract32, isNonNegFract32, isU32, u32 } from "../util/number"
@@ -197,7 +197,7 @@ export const from: RandFrom<string> = internalFrom
  * @param seed printable ASCII string
  * @return a mutable generator state derived from `seed`
  */
-export const mutFrom: MutRandFrom<string> = internalFrom
+export const mutFrom: ForkableMutRandFrom<string> = internalFrom
 
 const internalFromPlainUsing = (factory: FromPlain<ForkableMutRand>) => (
     x: unknown
