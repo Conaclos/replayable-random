@@ -4,9 +4,10 @@
 import { MutDistrib, Distrib } from "../core/distrib"
 import { u32 as u32t, isU32 } from "../util/number"
 import { asU32, asU32Between } from "../util/number-conversion"
-import { pureFrom, pipe } from "../helper/base"
+import { pureFrom, pipe, compose } from "../helper/base"
 import { fill, ArrayDistrib } from "../helper/array-helper"
 import { assert } from "../util/assert"
+import { mutFract32 } from "./uniform-fract32"
 
 /**
  * @param mutG [mutated] generator state
@@ -18,7 +19,7 @@ export const mutU32: MutDistrib<u32t> = (mutG) => asU32(mutG.random())
  * @param g generator state
  * @return a random unsigned integer (32bits), and next generator state
  */
-export const u32: Distrib<u32t> = (g) => g.derive(mutU32)
+export const u32: Distrib<u32t> = pureFrom(mutU32)
 
 /**
  * @curried
@@ -43,9 +44,9 @@ export const mutU32Between = (l: u32t) => {
  * @return a pure distribution that generates a
  *  random unsigned integer (32bits) in interval [l, exclusiveU[
  */
-export const u32Between: (l: u32t) => (excludedU: u32t) => Distrib<u32t> = (
-    l
-) => pipe(mutU32Between(l))(pureFrom)
+export const u32Between: (l: u32t) => (excludedU: u32t) => Distrib<u32t> = pipe(
+    mutU32Between
+)(compose(pureFrom))
 
 /**
  * @example
@@ -59,4 +60,4 @@ export const u32Between: (l: u32t) => (excludedU: u32t) => Distrib<u32t> = (
  *  The array is instantiated with `factory` and contains `n`
  *  random unsigned integer (32bits)
  */
-export const u32Fill: ArrayDistrib<u32t> = (factory) => fill(mutU32)(factory)
+export const u32Fill: ArrayDistrib<u32t> = fill(mutU32)

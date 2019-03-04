@@ -5,6 +5,7 @@ import { MutDistrib, Distrib } from "../core/distrib"
 import { i54 as i54t } from "../util/number"
 import { asI54 } from "../util/number-conversion"
 import { fill, ArrayDistrib } from "../helper/array-helper"
+import { pureFrom } from "../helper"
 
 /**
  * @param mutG [mutated] generator state
@@ -17,7 +18,7 @@ export const mutI54: MutDistrib<i54t> = (mutG) =>
  * @param g generator state
  * @return a random safe signed integer (54bits), and next generator state
  */
-export const i54: Distrib<i54t> = (g) => g.derive(mutI54)
+export const i54: Distrib<i54t> = pureFrom(mutI54)
 
 /**
  * @example
@@ -31,4 +32,4 @@ export const i54: Distrib<i54t> = (g) => g.derive(mutI54)
  *  The array is instantiated with `factory` and contains `n`
  *  random safe signed integer (54bits)
  */
-export const i54Fill: ArrayDistrib<i54t> = (factory) => fill(mutI54)(factory)
+export const i54Fill: ArrayDistrib<i54t> = fill(mutI54)

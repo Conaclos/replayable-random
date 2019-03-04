@@ -4,7 +4,7 @@
 import { MutDistrib, Distrib } from "../core/distrib"
 import { i32 as i32t, isU32, isI32 } from "../util/number"
 import { asU32, asI32Between } from "../util/number-conversion"
-import { pureFrom, pipe } from "../helper/base"
+import { pureFrom, pipe, compose } from "../helper/base"
 import { fill, ArrayDistrib } from "../helper/array-helper"
 import { assert } from "../util/assert"
 
@@ -43,9 +43,9 @@ export const mutI32Between = (l: i32t) => {
  * @return a pure distribution that generates a
  *  random signed integer (32bits) in interval [l, exclusiveU[
  */
-export const i32Between: (l: i32t) => (excludedU: i32t) => Distrib<i32t> = (
-    l
-) => pipe(mutI32Between(l))(pureFrom)
+export const i32Between: (l: i32t) => (excludedU: i32t) => Distrib<i32t> = pipe(
+    mutI32Between
+)(compose(pureFrom))
 
 /**
  * @example
@@ -59,4 +59,4 @@ export const i32Between: (l: i32t) => (excludedU: i32t) => Distrib<i32t> = (
  *  The array is instantiated with `factory` and contains `n`
  *  random signed integers (32bits)
  */
-export const i32Fill: ArrayDistrib<i32t> = (factory) => fill(mutI32)(factory)
+export const i32Fill: ArrayDistrib<i32t> = fill(mutI32)

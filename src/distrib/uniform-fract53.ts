@@ -4,6 +4,7 @@
 import { MutDistrib, Distrib } from "../core/distrib"
 import { asFract53 } from "../util/number-conversion"
 import { fract53 as fract53t } from "../util/number"
+import { pureFrom } from "../helper"
 
 /**
  * @param mutG [mutated] generator state
@@ -17,4 +18,4 @@ export const mutFract53: MutDistrib<fract53t> = (mutG) =>
  * @return a random float (64bits) in interval [0, 1[ using 53 significant bits,
  *  and next generator state
  */
-export const fract53: Distrib<fract53t> = (g) => g.derive(mutFract53)
+export const fract53: Distrib<fract53t> = pureFrom(mutFract53)
