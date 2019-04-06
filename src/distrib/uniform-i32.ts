@@ -2,7 +2,7 @@
 // Licensed under the zlib license (https://opensource.org/licenses/zlib).
 
 import { MutDistrib, Distrib } from "../core/distrib"
-import { i32 as i32t, isU32, isI32 } from "../util/number"
+import { i32 as i32t, isI32 } from "../util/number"
 import { asU32, asI32Between } from "../util/number-conversion"
 import { pureFrom, pipe, compose } from "../helper/base"
 import { fill, ArrayDistrib } from "../helper/array-helper"

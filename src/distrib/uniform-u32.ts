@@ -7,7 +7,6 @@ import { asU32, asU32Between } from "../util/number-conversion"
 import { pureFrom, pipe, compose } from "../helper/base"
 import { fill, ArrayDistrib } from "../helper/array-helper"
 import { assert } from "../util/assert"
-import { mutFract32 } from "./uniform-fract32"
 
 /**
  * @param mutG [mutated] generator state
