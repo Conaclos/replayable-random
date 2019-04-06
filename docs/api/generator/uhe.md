@@ -1,4 +1,3 @@
-
 # UHE
 
 All factories to derive a first state are available under the namespace `uhe`.
@@ -7,7 +6,7 @@ All factories to derive a first state are available under the namespace `uhe`.
 import { uhe } from "replayable-random"
 ```
 
-You can derive a first state from a [printable ASCII][printable-ascii] seed:
+Derive a first state from a [printable ASCII][printable-ascii] seed:
 
 ```js
 // Pure functional API
@@ -18,6 +17,7 @@ const mutG = uhe.mutFrom("printable-ascii-seed")
 ```
 
 or from a (typed) array of bytes:
+
 ```js
 const seed = (Uint8Array || Array).of(0x10, 0xff)
 
@@ -28,7 +28,9 @@ const g = uhe.fromBytes(seed)
 const mutG = uhe.mutFromBytes(seed)
 ```
 
-You can also serialise a generator state and recover it later:
+The seed can be a [randomly generated](../../best-practices.md#seed-generation).
+
+Serialise a generator state and recover it later:
 
 ```js
 const plainG = JSON.parse(JSON.stringify(g))

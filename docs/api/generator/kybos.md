@@ -1,4 +1,3 @@
-
 # Kybos
 
 All factories to derive a first state are available under the namespace `kybos`.
@@ -13,7 +12,7 @@ You can [choose another random generator](#custom-prng).
 
 ## Default PRNG
 
-You can derive a first state from a [printable ASCII][printable-ascii] seed:
+Derive a first state from a [printable ASCII][printable-ascii] seed:
 
 ```js
 // Pure functional API
@@ -24,6 +23,7 @@ const mutG = kybos.mutFrom("printable-ascii-seed")
 ```
 
 or from a (typed) array of bytes:
+
 ```js
 const seed = (Uint8Array || Array).of(0x10, 0xff)
 
@@ -34,7 +34,9 @@ const g = kybos.fromBytes(seed)
 const mutG = kybos.mutFromBytes(seed)
 ```
 
-You can also serialise a generator state and recover it later:
+The seed can be a [randomly generated](../../best-practices.md#seed-generation).
+
+Serialise a generator state and recover it later:
 
 ```js
 const plainG = JSON.parse(JSON.stringify(g))
@@ -57,7 +59,7 @@ if (mutRecoveredG !== undefined) {
 We choose **UHE** as custom random generator.
 You can use any random geneartor, even Kybos itself!
 
-You can derive a first state from a [printable ASCII][printable-ascii] seed:
+Derive a first state from a [printable ASCII][printable-ascii] seed:
 
 ```js
 // Pure functional API
@@ -68,6 +70,7 @@ const mutG = kybos.mutFromUsing(uhe.mutFromBytes)("printable-ascii-seed")
 ```
 
 or from a (typed) array of bytes:
+
 ```js
 const seed = (Uint8Array || Array).of(0x10, 0xff)
 
@@ -78,7 +81,9 @@ const g = kybos.fromBytesUsing(uhe.mutFromBytes)(seed)
 const mutG = kybos.mutFromBytesUsing(uhe.mutFromBytes)(seed)
 ```
 
-You can also serialise a generator state and recover it later:
+The seed can be a [randomly generated](../../best-practices.md#seed-generation).
+
+Serialise a generator state and recover it later:
 
 ```js
 const plainG = JSON.parse(JSON.stringify(g))

@@ -7,10 +7,11 @@ In a uniform distribution, two distinct elements have the same probability to be
 -   [i32](#uniform-i32)
 -   [u32](#uniform-u32)
 -   [i54](#uniform-i54)
+-   [base64](#uniform-base64)
 
 ## Uniform fract32
 
-A `fract32` is a non-negative float number 64bits between `0` (included) and `1` (excluded).
+A `fract32` is a non-negative 64 bits float number between `0` (included) and `1` (excluded).
 The genearted float uses 32 significant bits.
 It is [precise][dyadic].
 
@@ -35,7 +36,7 @@ const [xs, g1] = distrib.fract32Fill(Float64Array)(n)(g)
 
 ## Uniform fract53
 
-A `fract52` is a non-negative float number 64bits between `0` (included) and `1` (excluded).
+A `fract52` is a non-negative 64 bits float number between `0` (included) and `1` (excluded).
 The genearted float uses 53 significant bits.
 It is [precise][dyadic].
 
@@ -60,7 +61,7 @@ const [xs, g1] = distrib.fract53Fill(Float64Array)(n)(g)
 
 ## Uniform i32
 
-A `i32` is an integer encoded on 32bits.
+A `i32` is an integer encoded on 32 bits.
 It can encode integers from `-0x8000_0000` to `0x7fff_ffff`.
 
 Generate a i32:
@@ -94,7 +95,7 @@ const [xs, g1] = distrib.i32Fill(Int32Array)(n)(g)
 
 ## Uniform u32
 
-A `u32` is an unsigned integer encoded on 32bits.
+A `u32` is an unsigned integer encoded on 32 bits.
 It can encode natural numbers from `0` to `0xffff_ffff`.
 
 Generate a u32:
@@ -159,5 +160,21 @@ const [xs, g1] = distrib.i54Fill<number[]>(Array)(n)(g)
 const [xs, g1] = distrib.i54Fill(Uint32Array)(n)(g)
 ```
 
+## Uniform base64
+
+A [base64][base64] element can be encoded on 6 bits and represented by a subset of printable ASCII.
+This makes base64 strings suitable for data exchange between humans and computers.
+
+Generate an array of `n` bytes that includes 6 bits elements:
+
+```js
+// Pure API
+const [xs1, g1] = distrib.base64Bytes(n)(g)
+
+// Imperative API
+const xs = distrib.mutBase64Bytes(n)(mutG)
+```
+
+[base64]: https://en.wikipedia.org/wiki/Base64
 [dyadic]: https://en.wikipedia.org/wiki/Dyadic_rational
 [safe-integer]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger
