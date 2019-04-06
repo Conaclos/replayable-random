@@ -23,7 +23,7 @@ export const I32_TOP = 0x7fff_ffff | 0
 /**
  * @internal
  * @param n
- * @return Is `n' an u32?
+ * @return Is `n` a u32?
  */
 export const isU32 = (n: unknown): n is u32 =>
     typeof n === "number" && n === n >>> 0
@@ -31,7 +31,7 @@ export const isU32 = (n: unknown): n is u32 =>
 /**
  * @internal
  * @param n
- * @return Is `n' an i32?
+ * @return Is `n` a i32?
  */
 export const isI32 = (n: unknown): n is i32 =>
     typeof n === "number" && n === (n | 0)
@@ -44,7 +44,7 @@ const SHIFT_LEFT_32 = 2 ** 32
  *  it is possible to flag some non-fract32 as fract32.
  *
  * @param n
- * @return Is `n' a fract32?
+ * @return Is `n` a fract32?
  */
 export const isNonNegFract32 = (n: unknown): n is fract32 =>
     typeof n === "number" &&

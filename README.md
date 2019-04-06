@@ -55,7 +55,7 @@ const mutG = alea.mutFrom("printable-ascii-seed")
 Import `distrib`:
 
 ```js
-import { alea, distrib } from "replayable-random"
+import { distrib } from "replayable-random"
 ```
 
 Choose a distribution and generate your first random numbers.
